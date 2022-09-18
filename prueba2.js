@@ -28,6 +28,17 @@ function init() {
     controls.target.set(0, 20, 0);
     controls.update();
 
+    function addLight(...pos) {
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(...pos);
+        scene.add(light);
+      }
+      addLight(-1, 2, 4);
+      addLight( 2, -2, 3);
+    
+
 
     const point = new THREE.Vector3();
     const color = new THREE.Color();
@@ -35,14 +46,13 @@ function init() {
 
     let line, p;
 
-    const verticesCount = 100
     const splines = [];
     const geometries = [];
-    const splineCount = 3;
+    const splineCount = 10;
 
-    for(let i = 0; i < splineCount * 2; i++) {
+    for(let i = 0; i < splineCount; i++) {
         
-        const spline = createStarSpline(7, i * Math.PI / 16);
+        const spline = createStarSpline(7, i * Math.PI / 256, i*5);
         splines.push(spline);
     }
 
@@ -55,15 +65,41 @@ function init() {
 
     // s1: -–-----s11-------s12
 
-    const numVertices = segmentsCount * (splines.length - 1) * 6;
+    const numVertices = segmentsCount * (splines.length - 1) * 4;
     const numComponents = 3;
     const positions = new Float32Array(numVertices * numComponents);
     const indices = [];
 
+    for(const [s1, s2] of zip(splines, splines.slice(1))) {
 
+        for(let i=0; i < segmentsCount; i++) {
 
-    for(const spline of splines){
+            const t1 = i /segmentsCount; 
+            const t2 = (i+1) /segmentsCount; 
 
+            const s11 =  new THREE.Vector3();
+            const s12 =  new THREE.Vector3();
+            const s21 =  new THREE.Vector3();
+            const s22 =  new THREE.Vector3();
+    
+            s1.getPoint(t1, s11)
+            s1.getPoint(t2, s12)
+            s2.getPoint(t1, s21)
+            s2.getPoint(t2, s22)
+            
+
+            positions.set(s11.toArray(), posNdx);  posNdx += numComponents;
+            positions.set(s12.toArray(), posNdx);  posNdx += numComponents;
+            positions.set(s21.toArray(), posNdx);  posNdx += numComponents;
+            positions.set(s22.toArray(), posNdx);  posNdx += numComponents;
+
+            indices.push(
+                ndx, ndx + 1, ndx + 2,
+                ndx + 2, ndx + 1, ndx + 3,
+              );
+              ndx += 4;
+        }
+        /*
         const vertices = [], colors = [];
         for (let i = 0; i < verticesCount * 100; i++) {
 
@@ -79,9 +115,9 @@ function init() {
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
-        geometries.push(geometry)
+        geometries.push(geometry)*/
     }
-
+    /*
     const parameters = [
         [material, [0, 0, -10], geometries[0]],
         [material, [0, 0, 0], geometries[1]],
@@ -96,7 +132,53 @@ function init() {
         line.position.y = p[1][1];
         line.position.z = p[1][2];
         scene.add(line);
+    }*/
+    
+    console.log(positions)
+    const normals = positions.slice();
+    const geometry = new THREE.BufferGeometry();
+    const positionNumComponents = 3;
+    const normalNumComponents = 3;
+
+    const positionAttribute = new THREE.BufferAttribute(positions, positionNumComponents);
+    positionAttribute.dynamic = true;
+    geometry.setAttribute(
+        'position',
+        positionAttribute);
+    geometry.setAttribute(
+        'normal',
+        new THREE.BufferAttribute(normals, normalNumComponents));
+    geometry.setIndex(indices);
+
+    function makeInstance(geometry, color, x) {
+        const material = new THREE.MeshPhongMaterial({
+        color,
+        side: THREE.DoubleSide,
+        shininess: 100,
+        });
+
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        cube.position.x = x;
+        return cube;
     }
+
+    function makeWireeframeInstance(geometry) {
+        const wireframe = new THREE.WireframeGeometry( geometry );
+
+        const line = new THREE.LineSegments( wireframe );
+        line.material.depthTest = false;
+        line.material.opacity = 0.5;
+        line.material.transparent = true;
+        line.position.z = -25;
+        scene.add( line );
+    }
+
+    const cubes = [
+        // makeInstance(geometry, 0xFF0000, 0),
+        makeWireeframeInstance(geometry),
+    ];
 
     //
     const axesHelper = new THREE.AxesHelper(15);
