@@ -1,7 +1,7 @@
 import * as THREE from '../build/three.module.js';
 
 import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
-import { createStarSpline, zip } from './utils.js'
+import { createRotationSpline, createStarSpline, extrutionSplines, rotationSplines, zip } from './utils.js'
 
 let camera, scene, renderer, controls;
 
@@ -38,30 +38,17 @@ function init() {
     addLight(-1, 2, 4);
     addLight(2, -2, 3);
 
+    // const splineCount = 10;
+    // const baseSpline = createStarSpline(7);
+    // const theta = Math.PI / 64;
+    // const offset = 5;
 
-    const splines = [];
-    const geometries = [];
-    const splineCount = 10;
+    // const splines = extrutionSplines(baseSpline, splineCount, offset, theta);
 
-    const baseSpline = createStarSpline(7);
-    const Z_AXIS = new THREE.Vector3(0, 0, 1);
-    const theta = Math.PI / 64;
-    const offset = 5
-
-    for (let i = 0; i < splineCount; i++) {
-
-        // clonar
-        const points = [];
-        const offsetVec = new THREE.Vector3(0, 0, i * offset);
-
-        for (const p of baseSpline.points) {
-            const point = p.clone().applyAxisAngle(Z_AXIS, theta * i).add(offsetVec);
-            points.push(point);
-        }
-
-        const spline = new THREE.CatmullRomCurve3(points, true);
-        splines.push(spline);
-    }
+    const splineCount = 50;
+    const baseSpline = createRotationSpline();
+ 
+    const splines = rotationSplines(baseSpline, splineCount);
 
     const segmentsCount = 100;
     let posNdx = 0;
