@@ -1,7 +1,7 @@
 import * as THREE from '../build/three.module.js';
 
 import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
-import {createStarSpline, zip} from './utils.js'
+import { createStarSpline, zip } from './utils.js'
 
 let camera, scene, renderer, controls;
 
@@ -34,32 +34,38 @@ function init() {
         const light = new THREE.DirectionalLight(color, intensity);
         light.position.set(...pos);
         scene.add(light);
-      }
-      addLight(-1, 2, 4);
-      addLight( 2, -2, 3);
-    
+    }
+    addLight(-1, 2, 4);
+    addLight(2, -2, 3);
 
-
-    const point = new THREE.Vector3();
-    const color = new THREE.Color();
-    const material = new THREE.LineBasicMaterial({ color: 0xffffff, vertexColors: true });
-
-    let line, p;
 
     const splines = [];
     const geometries = [];
     const splineCount = 10;
 
-    for(let i = 0; i < splineCount; i++) {
-        
-        const spline = createStarSpline(7, i * Math.PI / 256, i*5);
+    const baseSpline = createStarSpline(7);
+    const Z_AXIS = new THREE.Vector3(0, 0, 1);
+    const theta = Math.PI / 64;
+    const offset = 5
+
+    for (let i = 0; i < splineCount; i++) {
+
+        // clonar
+        const points = [];
+        const offsetVec = new THREE.Vector3(0, 0, i * offset);
+
+        for (const p of baseSpline.points) {
+            const point = p.clone().applyAxisAngle(Z_AXIS, theta * i).add(offsetVec);
+            points.push(point);
+        }
+
+        const spline = new THREE.CatmullRomCurve3(points, true);
         splines.push(spline);
     }
 
     const segmentsCount = 100;
     let posNdx = 0;
     let ndx = 0;
-
 
     // s2: -–-----s21-------s22
 
@@ -70,34 +76,34 @@ function init() {
     const positions = new Float32Array(numVertices * numComponents);
     const indices = [];
 
-    for(const [s1, s2] of zip(splines, splines.slice(1))) {
+    for (const [s1, s2] of zip(splines, splines.slice(1))) {
 
-        for(let i=0; i < segmentsCount; i++) {
+        for (let i = 0; i < segmentsCount; i++) {
 
-            const t1 = i /segmentsCount; 
-            const t2 = (i+1) /segmentsCount; 
+            const t1 = i / segmentsCount;
+            const t2 = (i + 1) / segmentsCount;
 
-            const s11 =  new THREE.Vector3();
-            const s12 =  new THREE.Vector3();
-            const s21 =  new THREE.Vector3();
-            const s22 =  new THREE.Vector3();
-    
+            const s11 = new THREE.Vector3();
+            const s12 = new THREE.Vector3();
+            const s21 = new THREE.Vector3();
+            const s22 = new THREE.Vector3();
+
             s1.getPoint(t1, s11)
             s1.getPoint(t2, s12)
             s2.getPoint(t1, s21)
             s2.getPoint(t2, s22)
-            
 
-            positions.set(s11.toArray(), posNdx);  posNdx += numComponents;
-            positions.set(s12.toArray(), posNdx);  posNdx += numComponents;
-            positions.set(s21.toArray(), posNdx);  posNdx += numComponents;
-            positions.set(s22.toArray(), posNdx);  posNdx += numComponents;
+
+            positions.set(s11.toArray(), posNdx); posNdx += numComponents;
+            positions.set(s12.toArray(), posNdx); posNdx += numComponents;
+            positions.set(s21.toArray(), posNdx); posNdx += numComponents;
+            positions.set(s22.toArray(), posNdx); posNdx += numComponents;
 
             indices.push(
                 ndx, ndx + 1, ndx + 2,
                 ndx + 2, ndx + 1, ndx + 3,
-              );
-              ndx += 4;
+            );
+            ndx += 4;
         }
         /*
         const vertices = [], colors = [];
@@ -133,7 +139,7 @@ function init() {
         line.position.z = p[1][2];
         scene.add(line);
     }*/
-    
+
     console.log(positions)
     const normals = positions.slice();
     const geometry = new THREE.BufferGeometry();
@@ -152,9 +158,9 @@ function init() {
 
     function makeInstance(geometry, color, x) {
         const material = new THREE.MeshPhongMaterial({
-        color,
-        side: THREE.DoubleSide,
-        shininess: 100,
+            color,
+            side: THREE.DoubleSide,
+            shininess: 100,
         });
 
         const cube = new THREE.Mesh(geometry, material);
@@ -165,14 +171,14 @@ function init() {
     }
 
     function makeWireeframeInstance(geometry) {
-        const wireframe = new THREE.WireframeGeometry( geometry );
+        const wireframe = new THREE.WireframeGeometry(geometry);
 
-        const line = new THREE.LineSegments( wireframe );
+        const line = new THREE.LineSegments(wireframe);
         line.material.depthTest = false;
         line.material.opacity = 0.5;
         line.material.transparent = true;
         line.position.z = -25;
-        scene.add( line );
+        scene.add(line);
     }
 
     const cubes = [
