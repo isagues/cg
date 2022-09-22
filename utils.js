@@ -4,14 +4,14 @@ const Z_AXIS = new THREE.Vector3(0, 0, 1);
 
 const FULL_ROTATION = Math.PI * 2;
 
-export function createStarSpline(n=7, phase=0, z=0) {
+export function createStarSpline(n=7) {
     
     const points = []
 
     for (let i = 0; i < n * 2; i++) {
         const l = i % 2 == 0 ? 30 : 50;
-        const a = i / n * Math.PI + phase;
-        points.push(new THREE.Vector3(Math.cos(a) * l, Math.sin(a) * l, z));
+        const a = i / n * Math.PI;
+        points.push(new THREE.Vector3(Math.cos(a) * l, Math.sin(a) * l, 0));
     }
 
     return new THREE.CatmullRomCurve3(points, true);
