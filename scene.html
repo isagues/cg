@@ -32,7 +32,18 @@
 
     let camera, scene, renderer;
 
+    let forklift;
+
     init();
+    animate();
+
+    function animate() {
+
+      requestAnimationFrame( animate );
+      forklift.car.translateX(1);
+      forklift.car.rotateY(0.01);
+      renderer.render( scene, camera );
+    }
 
     function init() {
 
@@ -62,8 +73,8 @@
       dirLight.shadow.mapSize.set(1024, 1024);
       scene.add(dirLight);
 
-      const forklift = new Forklift();
-      scene.add( forklift.createCar() );
+      forklift = new Forklift();
+      scene.add( forklift.car );
 
       const axesHelper = new THREE.AxesHelper(150);
         scene.add(axesHelper);

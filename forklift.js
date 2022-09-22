@@ -4,6 +4,7 @@ export class Forklift {
     
     constructor(position = new THREE.Vector3(0, 0 ,0)) {
         this.position = position;
+        this.car = this.createCar();
     }
     
     createWheels() {
