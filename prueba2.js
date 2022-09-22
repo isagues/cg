@@ -38,97 +38,96 @@ function init() {
     addLight(-1, 2, 4);
     addLight(2, -2, 3);
 
-    // const splineCount = 10;
+    // const splineCount = 100;
     // const baseSpline = createStarSpline(7);
-    // const theta = Math.PI / 64;
-    // const offset = 5;
+    // const theta = Math.PI / 256;
+    // const offset = 1;
 
     // const splines = extrutionSplines(baseSpline, splineCount, offset, theta);
 
-    const splineCount = 50;
+    const splineCount = 180;
     const baseSpline = createRotationSpline();
  
     const splines = rotationSplines(baseSpline, splineCount);
 
-    const segmentsCount = 100;
-    let posNdx = 0;
-    let ndx = 0;
 
-    // s2: -–-----s21-------s22
+    function geometryPointsFromSplines(splines, samplesCount, nc=3) {
+        // nc == numero de componentes de los vectores de postion
 
-    // s1: -–-----s11-------s12
+        // s2: -–-----s21-------s22
 
-    const numVertices = segmentsCount * (splines.length - 1) * 4;
-    const numComponents = 3;
-    const positions = new Float32Array(numVertices * numComponents);
-    const indices = [];
+        // s1: -–-----s11-------s12
 
-    for (const [s1, s2] of zip(splines, splines.slice(1))) {
+        const numVertices = samplesCount * (splines.length - 1) * 4; // 4 porque usamos indices para no repetir
+        
+        const positions = new Float32Array(numVertices * nc);
+        const indices = [];
+        
+        let posNdx = 0;
+        let ndx = 0;
 
-        for (let i = 0; i < segmentsCount; i++) {
+        for (const [s1, s2] of zip(splines, splines.slice(1))) {
 
-            const t1 = i / segmentsCount;
-            const t2 = (i + 1) / segmentsCount;
+            for (let i = 0; i < samplesCount; i++) {
 
-            const s11 = new THREE.Vector3();
-            const s12 = new THREE.Vector3();
-            const s21 = new THREE.Vector3();
-            const s22 = new THREE.Vector3();
+                const t1 = i / samplesCount;
+                const t2 = (i + 1) / samplesCount;
 
-            s1.getPoint(t1, s11)
-            s1.getPoint(t2, s12)
-            s2.getPoint(t1, s21)
-            s2.getPoint(t2, s22)
+                const s11 = s1.getPoint(t1);
+                const s12 = s1.getPoint(t2);
+                const s21 = s2.getPoint(t1);
+                const s22 = s2.getPoint(t2);
 
+                positions.set(s11.toArray(), posNdx); posNdx += nc;
+                positions.set(s12.toArray(), posNdx); posNdx += nc;
+                positions.set(s21.toArray(), posNdx); posNdx += nc;
+                positions.set(s22.toArray(), posNdx); posNdx += nc;
 
-            positions.set(s11.toArray(), posNdx); posNdx += numComponents;
-            positions.set(s12.toArray(), posNdx); posNdx += numComponents;
-            positions.set(s21.toArray(), posNdx); posNdx += numComponents;
-            positions.set(s22.toArray(), posNdx); posNdx += numComponents;
-
-            indices.push(
-                ndx, ndx + 1, ndx + 2,
-                ndx + 2, ndx + 1, ndx + 3,
-            );
-            ndx += 4;
-        }
-        /*
-        const vertices = [], colors = [];
-        for (let i = 0; i < verticesCount * 100; i++) {
-
-            spline.getPoint(i / verticesCount / 100, point)
-    
-            vertices.push(point.x, point.y, point.z);
-    
-            color.setHSL(0.6, 1.0, 0.8);
-            colors.push(color.r, color.g, color.b);
+                indices.push(
+                    ndx, ndx + 1, ndx + 2,
+                    ndx + 2, ndx + 1, ndx + 3,
+                );
+                ndx += 4;
+            }
         }
 
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-        geometries.push(geometry)*/
+        return {positions, indices};
     }
-    /*
-    const parameters = [
-        [material, [0, 0, -10], geometries[0]],
-        [material, [0, 0, 0], geometries[1]],
-        [material, [0, 0, 10], geometries[2]],
-    ];
 
+    function normalFromPosition(position, nc=3) {
+        // nc == numero de componentes de los vectores de postion
 
-    for (const p of parameters) {
+        const normal = new Float32Array(position.length);
+        // Calculo de las normales de cada vértice de cada triangulo
+        const pA = new THREE.Vector3();
+        const pB = new THREE.Vector3();
+        const pC = new THREE.Vector3();
 
-        line = new THREE.Line(p[2], p[0]);
-        line.position.x = p[1][0];
-        line.position.y = p[1][1];
-        line.position.z = p[1][2];
-        scene.add(line);
-    }*/
+        const np = 4
 
-    console.log(positions)
-    const normals = positions.slice();
+        for (let i = 0; i < position.length; i+=(nc * np)) {
+            // normales de cara plana
+            pA.fromArray(position, i + (0 * nc));
+            pB.fromArray(position, i + (1 * nc));
+            pC.fromArray(position, i + (2 * nc));
+            
+            pC.sub( pB );
+            pA.sub( pB );
+            pC.cross( pA );
+            pC.normalize();
+            
+            pC.toArray( normal, i + (0 * nc));
+            pC.toArray( normal, i + (1 * nc));
+            pC.toArray( normal, i + (2 * nc));
+            pC.toArray( normal, i + (3 * nc));
+        }
+
+        return normal;
+    }
+
+    const {positions, indices} = geometryPointsFromSplines(splines, 1000);
+ 
+    const normals = normalFromPosition(positions, 3);
     const geometry = new THREE.BufferGeometry();
     const positionNumComponents = 3;
     const normalNumComponents = 3;
@@ -169,8 +168,8 @@ function init() {
     }
 
     const cubes = [
-        // makeInstance(geometry, 0xFF0000, 0),
-        makeWireeframeInstance(geometry),
+        makeInstance(geometry, 0xFF0000, 0),
+        // makeWireeframeInstance(geometry),
     ];
 
     //
