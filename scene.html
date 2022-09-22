@@ -29,6 +29,7 @@
 
     import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
     import { Forklift } from './forklift.js';
+    import { Keyboard } from './keyboard.js';
 
     let camera, scene, renderer;
 
@@ -75,6 +76,8 @@
 
       forklift = new Forklift();
       scene.add( forklift.car );
+
+      new Keyboard(document);
 
       const axesHelper = new THREE.AxesHelper(150);
         scene.add(axesHelper);
