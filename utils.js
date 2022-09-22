@@ -83,3 +83,23 @@ export function* zip(...arrays){
       yield arrays.map(array => array[i]);
     }
   }
+
+export function setMaterials(){
+    const materials = {};
+    materials[ 'wireframe' ] = new THREE.MeshBasicMaterial( { wireframe: true } );
+    materials[ 'flat' ] = new THREE.MeshPhongMaterial( { specular: 0x000000, flatShading: true, side: THREE.DoubleSide } );
+    materials[ 'smooth' ] = new THREE.MeshLambertMaterial( { side: THREE.DoubleSide } );
+    materials[ 'glossy' ] = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide } );
+
+  return materials;
+}
+
+export function setRotations(){
+    const rotations = {};
+    rotations[ 'Pi' ] = Math.PI;
+    rotations[ 'Pi/2' ] = Math.PI / 2;
+    rotations[ 'Pi/4' ] = Math.PI / 4;
+    rotations[ 'Pi/8' ] = Math.PI / 8;
+
+    return rotations;
+}
