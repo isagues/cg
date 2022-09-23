@@ -19,7 +19,10 @@ let geometryController = {
   geometryHeight: 100,
   geometryRotation: Math.PI / 2,
   geometryResolution: 40,
-  geometryMaterial: 'glossy'
+  geometryMaterial: 'glossy',
+  render: function() {
+    renderGeometry();
+  },
 };
 
 // var options = {
@@ -127,6 +130,8 @@ function setupGui() {
   geometry.add(geometryController, 'geometryResolution',  10, 60).name('Resolution').listen();
   geometry.add(geometryController, 'geometryMaterial', [ 'wireframe', 'flat', 'smooth', 'glossy' ]).name('Material').listen();
   geometry.open();
+
+  gui.add(geometryController, 'render');
 }
 
 function animate() {
@@ -151,7 +156,7 @@ function render() {
           geometryResolution = geometryController.geometryResolution;
           geometryMaterial = geometryController.geometryMaterial;
       
-          renderGeometry()
+          // renderGeometry();
       }
   
     renderer.render(scene, camera);
