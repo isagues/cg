@@ -31,6 +31,7 @@
     import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
     import { Forklift } from './forklift.js';
     import { Keyboard } from './keyboard.js';
+    import { Shelving } from './shelving.js';
 
     let camera, scene, renderer;
 
@@ -74,9 +75,11 @@
       dirLight.shadow.mapSize.set(1024, 1024);
       scene.add(dirLight);
 
+      const shelving = new Shelving();
+      scene.add( shelving.object );
+
       forklift = new Forklift(window.innerWidth / window.innerHeight);
       scene.add( forklift.car );
-      camera = forklift.cameras.driver;
 
       const keyboard = new Keyboard(document);
 
@@ -176,13 +179,13 @@
 
       //
 
-      // const controls = new OrbitControls(camera, renderer.domElement);
-      // controls.addEventListener('change', render);
-      // controls.minDistance = 50;
-      // controls.maxDistance = 200;
-      // controls.enablePan = false;
-      // controls.target.set(0, 20, 0);
-      // controls.update();
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.addEventListener('change', render);
+      controls.minDistance = 50;
+      controls.maxDistance = 500;
+      controls.enablePan = false;
+      controls.target.set(0, 20, 0);
+      controls.update();
 
       window.addEventListener('resize', onWindowResize);
 

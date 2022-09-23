@@ -1,4 +1,5 @@
 import * as THREE from '../build/three.module.js';
+import {lerp} from './utils.js';
 
 const MOVEMENT_SPEED = 1;
 const ROTATION_SPEED = 0.01;
@@ -170,13 +171,4 @@ export class Forklift {
         if(this.angle != 0) this.car.rotateY(this.angle);    
         if(this.lift && this.liftPosition != 0) this.lift.translateY(this.liftPosition);
     }
-}
-
-function lerp(a, b, t) {
-    return (a * (1.0 - t)) + (b * t);
-
-    // It's also sometimes written as:
-    // return a + ((b - a) * t);
-    // ... which might be easier to read for some people.
-    // The two are mathematically equivalent.
 }

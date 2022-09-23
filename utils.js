@@ -103,3 +103,13 @@ export function setRotations(){
 
     return rotations;
 }
+
+
+export function lerp(a, b, t) {
+  return (a * (1.0 - t)) + (b * t);
+
+  // It's also sometimes written as:
+  // return a + ((b - a) * t);
+  // ... which might be easier to read for some people.
+  // The two are mathematically equivalent.
+}
