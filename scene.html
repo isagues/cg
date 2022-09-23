@@ -3,9 +3,10 @@
 
 <head>
   <title>three.js webgl - 3MF</title>
+  <link rel="icon" href="data:,">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <link type="text/css" rel="stylesheet" href="main.css">
+  <link type="text/css" rel="stylesheet" href="../examples/main.css">
   <style>
     body {
       background-color: #a0a0a0;
@@ -41,8 +42,7 @@
     function animate() {
 
       requestAnimationFrame( animate );
-      forklift.car.translateX(1);
-      forklift.car.rotateY(0.01);
+      forklift.updateCar();
       renderer.render( scene, camera );
     }
 
@@ -77,7 +77,20 @@
       forklift = new Forklift();
       scene.add( forklift.car );
 
-      new Keyboard(document);
+      const keyboard = new Keyboard(document);
+
+      keyboard.handlers['KeyW'].press = () => forklift.foward();
+      keyboard.handlers['KeyW'].release = () => forklift.backward();
+      keyboard.handlers['KeyS'].press = () => forklift.backward();
+      keyboard.handlers['KeyS'].release = () => forklift.foward();
+      keyboard.handlers['KeyA'].press = () => forklift.left();
+      keyboard.handlers['KeyA'].release = () => forklift.right();
+      keyboard.handlers['KeyD'].press = () => forklift.right();
+      keyboard.handlers['KeyD'].release = () => forklift.left();
+      keyboard.handlers['KeyE'].press = () => forklift.up();
+      keyboard.handlers['KeyE'].release = () => forklift.down();
+      keyboard.handlers['KeyQ'].press = () => forklift.down();
+      keyboard.handlers['KeyQ'].release = () => forklift.up();
 
       const axesHelper = new THREE.AxesHelper(150);
         scene.add(axesHelper);

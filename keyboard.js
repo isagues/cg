@@ -1,20 +1,22 @@
 export class Keyboard {
     constructor(document) {
         this.handlers = {
-            KeyA: {press: () => {console.log("A")}, release: () => {}},
-            KeyW: {press: () => {console.log("W")}, release: () => {}},
-            KeyS: {press: () => {console.log("S")}, release: () => {}},
-            KeyD: {press: () => {console.log("D")}, release: () => {}},
-            KeyQ: {press: () => {console.log("S")}, release: () => {}},
-            KeyE: {press: () => {console.log("D")}, release: () => {}},
-            KeyG: {press: () => {console.log("D")}, release: () => {}},
+            KeyA: {press: () => {}, release: () => {}},
+            KeyW: {press: () => {}, release: () => {}},
+            KeyS: {press: () => {}, release: () => {}},
+            KeyD: {press: () => {}, release: () => {}},
+            KeyQ: {press: () => {}, release: () => {}},
+            KeyE: {press: () => {}, release: () => {}},
+            KeyG: {press: () => {}, release: () => {}},
         };
 
         document.addEventListener('keydown', (event) => {
             const handler = this.handlers[event.code];
-            if(handler && handler.press) handler.press()
+            if(handler && handler.press) {
+                handler.press();
+            }
             
-            console.log(`Key code value: ${event.code}`);
+            console.log(`keydown value: ${event.code}`);
           }, false);
         
         document.addEventListener("keypress", (event) => {
@@ -24,6 +26,8 @@ export class Keyboard {
         document.addEventListener("keyup", (event) => {
             const handler = this.handlers[event.code];
             if(handler && handler.release) handler.release()
+
+            console.log(`keyup value: ${event.code}`);
         }, false);
     }
 }
