@@ -74,23 +74,45 @@
       dirLight.shadow.mapSize.set(1024, 1024);
       scene.add(dirLight);
 
-      forklift = new Forklift();
+      forklift = new Forklift(window.innerWidth / window.innerHeight);
       scene.add( forklift.car );
+      camera = forklift.cameras.driver;
 
       const keyboard = new Keyboard(document);
 
-      keyboard.handlers['KeyW'].press = () => forklift.foward();
-      keyboard.handlers['KeyW'].release = () => forklift.backward();
-      keyboard.handlers['KeyS'].press = () => forklift.backward();
-      keyboard.handlers['KeyS'].release = () => forklift.foward();
-      keyboard.handlers['KeyA'].press = () => forklift.left();
-      keyboard.handlers['KeyA'].release = () => forklift.right();
-      keyboard.handlers['KeyD'].press = () => forklift.right();
-      keyboard.handlers['KeyD'].release = () => forklift.left();
-      keyboard.handlers['KeyE'].press = () => forklift.up();
-      keyboard.handlers['KeyE'].release = () => forklift.down();
-      keyboard.handlers['KeyQ'].press = () => forklift.down();
-      keyboard.handlers['KeyQ'].release = () => forklift.up();
+      keyboard.handlers['KeyW'] = {
+        press: () => forklift.foward(),
+        release: () => forklift.backward()
+      }
+      keyboard.handlers['KeyS'] = {
+        press: () => forklift.backward(),
+        release: () => forklift.foward()
+      }
+      keyboard.handlers['KeyA'] = {
+        press: () => forklift.left(),
+        release: () => forklift.right()
+      }
+      keyboard.handlers['KeyD'] = {
+        press: () => forklift.right(),
+        release: () => forklift.left()
+      }
+      keyboard.handlers['KeyE'] = {
+        press: () => forklift.up(),
+        release: () => forklift.down()
+      }
+      keyboard.handlers['KeyQ'] = {
+        press: () => forklift.down(),
+        release: () => forklift.up()
+      }
+      keyboard.handlers['Digit4'] = {
+        press: () => camera = forklift.cameras.driver
+      }
+      keyboard.handlers['Digit5'] = {
+        press: () => camera = forklift.cameras.back
+      }
+      keyboard.handlers['Digit6'] = {
+        press: () => camera = forklift.cameras.side
+      }
 
       const axesHelper = new THREE.AxesHelper(150);
         scene.add(axesHelper);
@@ -154,13 +176,13 @@
 
       //
 
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.addEventListener('change', render);
-      controls.minDistance = 50;
-      controls.maxDistance = 200;
-      controls.enablePan = false;
-      controls.target.set(0, 20, 0);
-      controls.update();
+      // const controls = new OrbitControls(camera, renderer.domElement);
+      // controls.addEventListener('change', render);
+      // controls.minDistance = 50;
+      // controls.maxDistance = 200;
+      // controls.enablePan = false;
+      // controls.target.set(0, 20, 0);
+      // controls.update();
 
       window.addEventListener('resize', onWindowResize);
 

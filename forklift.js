@@ -5,12 +5,16 @@ const ROTATION_SPEED = 0.01;
 
 export class Forklift {
     
-    constructor(position = new THREE.Vector3(0, 0 ,0)) {
+    constructor(ratio, position = new THREE.Vector3(0, 0 ,0)) {
         this.position = position;
+        this.ratio = ratio;
         this.car = this.createCar();
         this.speed = 0;
         this.angle = 0;
         this.liftPosition = 0;
+        this.cameras = {};
+
+        this.createCameras();
     }
     
     createWheels() {
@@ -59,9 +63,47 @@ export class Forklift {
         return structure;
     }
 
+    createCameras() {
+        this.cameras = {
+            driver: this.createDriverCamera(),
+            back: this.createBackCamera(),
+            side: this.createSideCamera(),
+        }
+    }
+
+    createDriverCamera() {
+        const camera = new THREE.PerspectiveCamera(90, this.ratio, 1, 550);
+        camera.position.y = 25;
+        camera.position.z = -10;
+        camera.rotation.y = -Math.PI/2;
+
+        this.car.add(camera);
+        return camera
+    }
+
+    createBackCamera() {
+        const camera = new THREE.PerspectiveCamera(90, this.ratio, 1, 550);
+        camera.position.y = 60;
+        camera.position.x = -70;
+        camera.rotation.y = -Math.PI/2;
+
+        this.car.add(camera);
+        return camera
+    }
+
+    createSideCamera() {
+        const camera = new THREE.PerspectiveCamera(90, this.ratio, 1, 550);
+        camera.position.y = 60;
+        camera.position.z = 75;
+        // camera.rotation.y = Math.PI/2;
+
+        this.car.add(camera);
+        return camera
+    }
+
     createCar() {
         const car = new THREE.Group();
-        
+
         const width = 30;
 
         const backWheel = this.createWheels();
