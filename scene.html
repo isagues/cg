@@ -142,6 +142,7 @@
       keyboard.handlers['Digit1'] = {
         press: () => {
           camera = orbitCamera;
+          orbitCamera.position.set(0, 100, 100);
           controls.target.set(0, 20, 0);
           controls.update();
         }
@@ -149,7 +150,7 @@
       keyboard.handlers['Digit2'] = {
         press: () => {
           camera = orbitCamera;
-          console.log(printer.printer.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)))
+          orbitCamera.position.set(0, 100, 100);
           controls.target.copy(printer.printer.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)));
           controls.update();
         }
@@ -157,6 +158,7 @@
       keyboard.handlers['Digit3'] = {
         press: () => {
           camera = orbitCamera;
+          orbitCamera.position.set(0, 100, 100);
           controls.target.copy(shelving.object.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)));
           controls.update();
         }
