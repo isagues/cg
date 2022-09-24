@@ -3,17 +3,20 @@ import {lerp} from './utils.js';
 
 const MOVEMENT_SPEED = 1;
 const ROTATION_SPEED = 0.01;
+const MAX_MOVEMENT_SPEED = 5;
+const MAX_ROTATION_SPEED = 0.05;
 
 export class Forklift {
     
     constructor(ratio, position = new THREE.Vector3(0, 0 ,0)) {
         this.position = position;
         this.ratio = ratio;
-        this.car = this.createCar();
         this.speed = 0;
         this.angle = 0;
-        this.liftPosition = 0;
+        this.liftSpeed = 0;
         this.cameras = {};
+        this.liftHeight = 100;
+        this.car = this.createCar();
 
         this.createCameras();
     }
@@ -28,37 +31,36 @@ export class Forklift {
     createLift(spacing, liftPosition) {
         const structure = new THREE.Group();
 
-        const height = 75;
         const acrossCount = 5;
 
         const columnMaterial    = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
         const acrossMaterial    = new THREE.MeshLambertMaterial({ color: 0x00EEEE });
         const liftMaterial      = new THREE.MeshLambertMaterial({ color: 0x44FF77 });
 
-        const columnGeometry    = new THREE.BoxBufferGeometry(5, height, 5);
+        const columnGeometry    = new THREE.BoxBufferGeometry(5, this.liftHeight, 5);
         const liftGeometry      = new THREE.BoxBufferGeometry(spacing*2, 0.5, spacing*2);
         const acrossGeometry    = new THREE.BoxBufferGeometry(2, 2, spacing*2);
 
         const column1 = new THREE.Mesh(columnGeometry, columnMaterial);
         column1.position.z = - spacing;
-        column1.position.y = height / 2;
+        column1.position.y = this.liftHeight / 2;
         structure.add(column1);
         
         const column2 = new THREE.Mesh(columnGeometry, columnMaterial);
         column2.position.z = spacing;
-        column2.position.y = height / 2;
+        column2.position.y = this.liftHeight / 2;
         structure.add(column2);
 
         for(let i = 0; i <= acrossCount; i++) {
             const across = new THREE.Mesh(acrossGeometry, acrossMaterial);
-            across.position.y = lerp(1, height-1, i/acrossCount);
+            across.position.y = lerp(1, this.liftHeight-1, i/acrossCount);
 
             structure.add(across); 
         }
 
         this.lift = new THREE.Mesh(liftGeometry, liftMaterial);
         this.lift.position.x = spacing;
-        this.lift.position.y = lerp(0, height, liftPosition);
+        this.lift.position.y = lerp(0, this.liftHeight, liftPosition);
         structure.add(this.lift);
 
         return structure;
@@ -144,31 +146,62 @@ export class Forklift {
 
     foward() {
         this.speed += MOVEMENT_SPEED;
+        this.speed = Math.min(this.speed, MAX_MOVEMENT_SPEED);
     }
 
     backward() {
         this.speed -= MOVEMENT_SPEED;
+        this.speed = Math.max(this.speed, -MAX_MOVEMENT_SPEED);
+    }
+
+    stopMovement() {
+        this.speed = 0;
     }
 
     right() {
         this.angle -= ROTATION_SPEED;
+        this.angle = Math.max(this.angle, -MAX_ROTATION_SPEED);
     }
 
     left() {
         this.angle += ROTATION_SPEED;
+        this.angle = Math.min(this.angle, MAX_ROTATION_SPEED);
+    }
+
+    stopRotation() {
+        this.angle = 0;
     }
 
     up() {
-        this.liftPosition += 1;
+        this.liftSpeed += 1;
     }
 
     down() {
-        this.liftPosition -= 1;
+        this.liftSpeed -= 1;
+    }
+
+    stopLiftMovement() {
+        this.liftSpeed = 0;
+    }
+
+    updateLiftPosition() {
+        if(this.liftSpeed == 0) return;
+        if(this.lift.position.y + this.liftSpeed >= this.liftHeight) {
+            this.lift.position.setY(this.liftHeight);
+            this.liftSpee = 0
+        }
+        else if(this.lift.position.y + this.liftSpeed <= 0) {
+            this.lift.position.setY(0);
+            this.liftSpee = 0
+        }
+        else {
+            this.lift.translateY(this.liftSpeed)
+        }
     }
 
     updateCar() {
         if(this.speed != 0) this.car.translateX(this.speed);
         if(this.angle != 0) this.car.rotateY(this.angle);    
-        if(this.lift && this.liftPosition != 0) this.lift.translateY(this.liftPosition);
+        if(this.lift && this.liftSpeed != 0) this.updateLiftPosition();
     }
 }
