@@ -1,135 +1,106 @@
 import * as THREE from '../build/three.module.js';
 
 
-export class Forklift {
+export class Printer {
     
-    constructor(position = new THREE.Vector3(-25, 0 ,0)) {
+    constructor(position = new THREE.Vector3(100, 0 ,0)) {
         this.position = position;
         this.printer = this.createPrinter();
         this.liftPosition = 0;
         this.geometry;
     }
 
-    createLift(spacing, liftPosition) {
+    createLiftHead(columnPosition) {
+      const liftHead = new THREE.Group();
+      const acrossMaterial    = new THREE.MeshLambertMaterial({ color: 0x266594 });
+      const liftMaterial      = new THREE.MeshLambertMaterial({ color: 0x5EDF60 });
+
+      const first_cube      = new THREE.BoxGeometry(5, 5, 5);
+      const columnPiece = new THREE.Mesh( first_cube, liftMaterial );
+      columnPiece.position.x = columnPosition.x;
+      columnPiece.position.y = columnPosition.y;
+      
+      liftHead.add(columnPiece);
+
+      const across_bar      = new THREE.BoxGeometry(15, 4, 5);
+      const acrossPiece = new THREE.Mesh( across_bar, acrossMaterial );
+      acrossPiece.position.x = columnPosition.x - 10;
+      acrossPiece.position.y = columnPosition.y;
+      liftHead.add(acrossPiece);
+
+      const lift_cube      = new THREE.BoxGeometry(5, 5, 10);
+      const liftHeadCube = new THREE.Mesh( lift_cube, liftMaterial );
+      liftHeadCube.position.x = acrossPiece.position.x - 15/2;
+      liftHeadCube.position.y = columnPosition.y;
+      liftHead.add(liftHeadCube);
+
+      const lift      = new THREE.BoxGeometry(30, 1, 30);
+      const liftPlain = new THREE.Mesh( lift, liftMaterial );
+      liftPlain.position.x = liftHeadCube.position.x;
+      liftPlain.position.y = liftHeadCube.position.y - 5/2;
+      liftHead.add(liftPlain);
+
+      return liftHead;
+    }
+
+    createLift(printer_radius, printer_height, printerBasePosition) {
         const structure = new THREE.Group();
 
         const height = 75;
-        const acrossCount = 5;
 
-        const columnMaterial    = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
-        const acrossMaterial    = new THREE.MeshLambertMaterial({ color: 0x00EEEE });
-        const liftMaterial      = new THREE.MeshLambertMaterial({ color: 0x44FF77 });
+        const columnMaterial    = new THREE.MeshLambertMaterial({ color: 0xE6D3C3 });
+        const columnGeometry    = new THREE.CylinderGeometry(2, 2, height, 32);
+        const column = new THREE.Mesh(columnGeometry, columnMaterial);
+        column.position.x = printer_radius / 2 + 5/2;
+        column.position.y = printer_height + printerBasePosition.y;
 
-        const columnGeometry    = new THREE.BoxBufferGeometry(5, height, 5);
-        const liftGeometry      = new THREE.BoxBufferGeometry(spacing*2, 0.5, spacing*2);
-        const acrossGeometry    = new THREE.BoxBufferGeometry(2, 2, spacing*2);
+        structure.add(column);
 
-        const column1 = new THREE.Mesh(columnGeometry, columnMaterial);
-        column1.position.z = - spacing;
-        column1.position.y = height / 2;
-        structure.add(column1);
-        
-        const column2 = new THREE.Mesh(columnGeometry, columnMaterial);
-        column2.position.z = spacing;
-        column2.position.y = height / 2;
-        structure.add(column2);
-
-        for(let i = 0; i <= acrossCount; i++) {
-            const across = new THREE.Mesh(acrossGeometry, acrossMaterial);
-            across.position.y = lerp(1, height-1, i/acrossCount);
-
-            structure.add(across); 
-        }
-
-        this.lift = new THREE.Mesh(liftGeometry, liftMaterial);
-        this.lift.position.x = spacing;
-        this.lift.position.y = lerp(0, height, liftPosition);
-        structure.add(this.lift);
+        const head = this.createLiftHead(column.position);
+        structure.add(head);
 
         return structure;
     }
 
-
     createPrinter() {
         const printer = new THREE.Group();
-
-        const geometry = new THREE.CylinderGeometry( 5, 5, 40, 32 );
-        const material = new THREE.MeshLambertMaterial({ color: 0xe6d3c3 });
+        const printer_height = 30;
+        const printer_radius = 30;
+        const geometry = new THREE.CylinderGeometry( printer_radius, printer_radius, printer_height, 32 );
+        const material = new THREE.MeshLambertMaterial({ color: 0xE6D3C3 });
         const printerBase = new THREE.Mesh(geometry, material);
-        printerBase.position.x = this.position.x;
-        printerBase.position.y = this.position.y;
-        printerBase.position.z = this.position.z;
+     
+        printerBase.position.y = printer_height/2;
+        
         printer.add(printerBase)
 
-        // const backWheel = this.createWheels();
-        // backWheel.rotation.x = Math.PI/2;
-        // backWheel.position.y = 6;
-        // backWheel.position.x = -18;
-        // car.add(backWheel);
         
-        // const frontWheel = this.createWheels();
-        // frontWheel.rotation.x = Math.PI/2;
-        // frontWheel.position.y = 6;  
-        // frontWheel.position.x = 18;
-        // car.add(frontWheel);
-        
-        // const lift = this.createLift(width/2, 0.25);
-        // lift.position.y = 12 - 15/2;  
-        // lift.position.x = 30;
-        // car.add(lift);
-      
-        // const main = new THREE.Mesh(
-        //   new THREE.BoxBufferGeometry(60, 15, 30),
-        //   new THREE.MeshLambertMaterial({ color: 0x78b14b })
-        // );
-        // main.position.y = 12;
-        // car.add(main);
-      
-        // const cabin = new THREE.Mesh(
-        //   new THREE.BoxBufferGeometry(33, 12, 24),
-        //   new THREE.MeshLambertMaterial({ color: 0xffffff })
-        // );
-        // cabin.position.x = -6;
-        // cabin.position.y = 25.5;
-        // car.add(cabin);
+        const lift = this.createLift(printer_radius, printer_height, printerBase.position);
+        printer.add(lift);
+
+        printer.position.x = this.position.x;
+        printer.position.x = this.position.y;
+        printer.position.z = this.position.z;
       
         return printer;
     }
 
-//     foward() {
-//         this.speed += MOVEMENT_SPEED;
-//     }
+    up() {
+        this.liftPosition += 1;
+    }
 
-//     backward() {
-//         this.speed -= MOVEMENT_SPEED;
-//     }
+    down() {
+        this.liftPosition -= 1;
+    }
 
-//     right() {
-//         this.angle -= ROTATION_SPEED;
-//     }
+    updatePrinter() {
+        if(this.lift && this.liftPosition != 0) this.lift.translateY(this.liftPosition);
+    }
+}
 
-//     left() {
-//         this.angle += ROTATION_SPEED;
-//     }
-
-//     up() {
-//         this.liftPosition += 1;
-//     }
-
-//     down() {
-//         this.liftPosition -= 1;
-//     }
-
-//     updateCar() {
-//         if(this.speed != 0) this.car.translateX(this.speed);
-//         if(this.angle != 0) this.car.rotateY(this.angle);    
-//         if(this.lift && this.liftPosition != 0) this.lift.translateY(this.liftPosition);
-//     }
-// }
-
-// function lerp(a, b, t) {
-//     return (a * (1.0 - t)) + (b * t);
-
+function lerp(a, b, t) {
+    return (a * (1.0 - t)) + (b * t);
+    
     // It's also sometimes written as:
     // return a + ((b - a) * t);
     // ... which might be easier to read for some people.

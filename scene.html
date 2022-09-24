@@ -20,6 +20,14 @@
     <a href="http://3mf.io" target="_blank" rel="noopener">3MF</a> file with materials
   </div>
 
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../build/three.module.js"
+      }
+    }
+  </script>
+
   <script type="module">
 
     import * as THREE from '../build/three.module.js';
@@ -28,7 +36,8 @@
     import { Forklift } from './forklift.js';
     import { Keyboard } from './keyboard.js';
     import { Shelving } from './shelving.js';
-
+    import { Printer } from './printer.js';
+    
     let camera, scene, renderer;
 
     let forklift;
@@ -87,6 +96,9 @@
       dirLight.shadow.mapSize.set(1024, 1024);
       scene.add(dirLight);
 
+      const printer = new Printer();
+      scene.add( printer.printer);
+
       const shelving = new Shelving();
       scene.add( shelving.object );
 
@@ -132,17 +144,16 @@
           camera = orbitCamera;
           controls.target.set(0, 20, 0);
           controls.update();
-          controls.target.copy(shelving.object.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)));
-
         }
       }
-      // keyboard.handlers['Digit2'] = {
-      //   press: () => {
-      //     camera = orbitCamera;
-      //     controls.target.copy(shelving.object.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)));
-      //     controls.update();
-      //   }
-      // }
+      keyboard.handlers['Digit2'] = {
+        press: () => {
+          camera = orbitCamera;
+          console.log(printer.printer.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)))
+          controls.target.copy(printer.printer.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0,50,0)));
+          controls.update();
+        }
+      }
       keyboard.handlers['Digit3'] = {
         press: () => {
           camera = orbitCamera;
@@ -160,8 +171,10 @@
         press: () => camera = forklift.cameras.side
       }
 
-      scene.add(camera);
-  
+      const axesHelper = new THREE.AxesHelper(150);
+      scene.add(axesHelper);
+      scene.add(new THREE.GridHelper(150));
+
       createWalls(scene);
       
       //
