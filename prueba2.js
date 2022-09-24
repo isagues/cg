@@ -72,7 +72,7 @@ function init() {
     controls = new OrbitControls(camera, renderer.domElement);
     // controls.addEventListener('change', render);
     controls.minDistance = 50;
-    controls.maxDistance = 1000;
+    controls.maxDistance = 250;
     controls.enablePan = false;
     controls.target.set(0, 20, 0);
     controls.update();
@@ -126,7 +126,7 @@ function setupGui() {
   geometry.add(geometryController, 'geometryCode', Object.keys(shapes)).name('Code').listen();
   geometry.add(geometryController, 'geometryHeight', 0, 400).name('Height').listen();
   geometry.add(geometryController, 'geometryRotation',  0, Math.PI * 2).name('Rotation').listen();
-  geometry.add(geometryController, 'geometryResolution',  10, 60).name('Resolution').listen();
+  geometry.add(geometryController, 'geometryResolution',  10, 200).name('Resolution').listen();
   geometry.add(geometryController, 'geometryMaterial', [ 'wireframe', 'flat', 'smooth', 'glossy' ]).name('Material').listen();
   geometry.open();
 
