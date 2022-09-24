@@ -79,7 +79,7 @@ export class Printer {
         printer.add(lift);
 
         printer.position.x = this.position.x;
-        printer.position.x = this.position.y;
+        printer.position.y = this.position.y;
         printer.position.z = this.position.z;
       
         return printer;
