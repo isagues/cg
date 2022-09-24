@@ -4,12 +4,15 @@ import { GeneratedGeometry } from './geometries.js'
 
 export class Printer {
     
-    constructor(position = new THREE.Vector3(100, 0 ,0), printerRadius = 30, printerHeight = 30) {
+    constructor(position = new THREE.Vector3(100, 0 ,0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=3) {
         this.position = position;
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
+        this.maxPieceHeight = maxPieceHeight;
+        this.steps = 3;
+        this.liftHeight = this.printerHeight + 5;
+        this.heightInterval = this.maxPieceHeight / this.steps;
         this.printer = this.createPrinter();
-        this.liftPosition = 0;
         this.materials = setMaterials();
         this.printing = false;
         this.liftHead;
@@ -44,7 +47,6 @@ export class Printer {
       const lift      = new THREE.BoxGeometry(30, 1, 30);
       const liftPlain = new THREE.Mesh( lift, liftMaterial );
       liftPlain.position.x = liftHeadCube.position.x;
-      liftPlain.position.y = liftHeadCube.position.y - cube_size/2;
       liftHead.add(liftPlain);
 
       return liftHead;
@@ -53,7 +55,7 @@ export class Printer {
     createLift(printerBasePosition) {
         const structure = new THREE.Group();
 
-        const height = 100;
+        const height = this.maxPieceHeight * 2;
 
         const columnMaterial    = new THREE.MeshLambertMaterial({ color: 0xE6D3C3 });
         const columnGeometry    = new THREE.CylinderGeometry(2, 2, height, 32);
@@ -64,7 +66,7 @@ export class Printer {
         structure.add(column);
 
         this.liftHead = this.createLiftHead(column.position);
-        this.liftHead.position.y = this.printerHeight * 1.5;
+        this.resetLift();
         structure.add(this.liftHead);
 
         return structure;
@@ -91,57 +93,41 @@ export class Printer {
         return printer;
     }
 
-  //   renderPiece(geometryController) {
-  //     const maxHeight = 50;
-  //     const heightInterval = maxHeight / 10;
-  //     this.liftHead.position.y = this.printerHeight * 1.5;
-  //     this.printer.remove(this.piece);
-  //     if (this.printing) return;
-  //     this.printing = true;
-  //     for (let i = 0; i < 10; i++) {
-  //         setTimeout(() => { 
-  //           if (this.piece !== undefined) this.printer.remove(this.piece);
-  //           let height = maxHeight / (10 - i);
-  //           this.liftHead.translateY(heightInterval/2);
-  //           this.renderGeometry(geometryController, height);
-  //          }, 3000);  
-  //     }
-  //     this.printing = false;
-  // }
-
       renderPiece(geometryController) {
-        const maxHeight = 50;
-        const heightInterval = maxHeight / 3;
-        this.liftHead.position.y = this.printerHeight * 1.5;
+
+        this.resetLift();
         this.printer.remove(this.piece);
         if (this.printing) return;
         this.printing = true;
-
-        setTimeout(() => { 
-          if (this.piece !== undefined) this.printer.remove(this.piece);
-          this.liftHead.translateY(heightInterval/2);
-          this.renderGeometry(geometryController, maxHeight / 3);
-        }, 1000);
-        setTimeout(() => { 
-          if (this.piece !== undefined) this.printer.remove(this.piece);
-          this.liftHead.translateY(heightInterval/2);
-          this.renderGeometry(geometryController, maxHeight / 2);
-        }, 2000);
-        setTimeout(() => { 
-          if (this.piece !== undefined) this.printer.remove(this.piece);
-          this.liftHead.translateY(heightInterval/2);
-          this.renderGeometry(geometryController, maxHeight);
-        }, 3000);
-
+        for (let i = 1; i <= this.steps; i++) {
+          setTimeout(() => { 
+            this.animationFrame(geometryController, i * this.heightInterval);
+          }, i * 500);      
+        }
         this.printing = false;
     }
 
+    animationFrame(geometryController, height) {
+      if (this.piece !== undefined) this.printer.remove(this.piece);
+          this.upLiftHead();
+          this.renderGeometry(geometryController, height);
+    }
+
+    upLiftHead() {
+      if(this.liftHead.position.y < this.maxPieceHeight + this.liftHeight) {
+        this.liftHead.translateY((this.heightInterval + 5)/2);
+      }
+    }
+
+    resetLift(){
+      this.liftHead.position.y = this.liftHeight;
+    }
 
     renderGeometry(geometryController, height) {      
       const geometry = new GeneratedGeometry(geometryController.geometryCode, height, geometryController.geometryRotation, Math.round(geometryController.geometryResolution));
       
       this.piece = new THREE.Mesh( geometry, this.materials[ geometryController.geometryMaterial ] );
-      this.piece.position.y = this.printerHeight + height/2;
+      this.piece.position.y = this.liftHeight + height/2;
       this.piece.rotateX(Math.PI / 2);
       
       this.printer.add(this.piece);
