@@ -371,11 +371,8 @@ function createA4Cruve(width, height) {
         new THREE.Vector3(6 * d, 0, 1.5 * h),
         new THREE.Vector3(5 * d, 0, 2 * h),
         new THREE.Vector3(3 * d, 0, 2.2 * h),
-        new THREE.Vector3(2.8 * d, 0, 2.4 * h),
-        new THREE.Vector3(2.6 * d, 0, 2.6 * h),
-        new THREE.Vector3(2.4 * d, 0, 2.8 * h),
-        new THREE.Vector3(2.6 * d, 0, 3* h),
-        new THREE.Vector3(3 * d, 0, 3.5 * h),
+        new THREE.Vector3(2.8 * d, 0, 2.6* h),
+        new THREE.Vector3(5 * d, 0, 3.5 * h),
         new THREE.Vector3(8 * d, 0, 4 * h),
     ]));
     
