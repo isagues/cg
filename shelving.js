@@ -6,11 +6,10 @@ const ROTATION_SPEED = 0.01;
 
 export class Shelving { 
 
-    constructor(position = new THREE.Vector3(50, 0, 125)) {
+    constructor(position = new THREE.Vector3(-100, 0, 125)) {
         this.object = this.createShelving();
         this.object.position.copy(position);
         this.object.rotation.y = Math.PI /2;
-
     }
 
 
