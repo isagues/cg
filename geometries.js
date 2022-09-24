@@ -11,7 +11,7 @@ import { createRotationSpline, createStarSpline, extrutionSplines, rotationSplin
 
 const shapes = {
     B2: {
-        spline: createStarSpline(7),
+        spline: createStarSpline(7, 10),
         type: 'EXTRUSION',
     },
     A3: {
@@ -47,9 +47,9 @@ export class GeneratedGeometry extends BufferGeometry {
 
         // this.setIndex( new BufferAttribute( indices, 1 ) );
         this.setIndex(indices);
-		this.setAttribute( 'position', new BufferAttribute( positions, 3 ) );
-		this.setAttribute( 'normal', new BufferAttribute( normals, 3 ) );
-		// this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
+        this.setAttribute( 'position', new BufferAttribute( positions, 3 ) );
+        this.setAttribute( 'normal', new BufferAttribute( normals, 3 ) );
+        // this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
 
         // TODO(nacho): porque¿?¿?¿
         this.computeBoundingSphere();
