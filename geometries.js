@@ -1,88 +1,109 @@
-import {
-	BufferAttribute,
-	BufferGeometry,
-	Matrix4,
-	Vector3,
-	Vector4
-} from '../build/three.module.js';
-
-import { createRotationSpline, createStarSpline, extrutionSplines, rotationSplines, zip } from './utils.js'
+import * as THREE from '../build/three.module.js';
+import { createB1Curve, createB2Curve, createB3Curve, createA3Cruve} from './utils.js'
 
 
-const shapes = {
+export const shapes = {
+    B1: {
+        spline: createB1Curve(25),
+        type: 'EXTRUSION',
+    },
     B2: {
-        spline: createStarSpline(7, 10),
+        spline: createB2Curve(25),
+        type: 'EXTRUSION',
+    },
+    B3: {
+        spline: createB3Curve(25),
         type: 'EXTRUSION',
     },
     A3: {
-        spline: createRotationSpline(),
+        spline: createA3Cruve(25, 30),
         type: 'ROTATION',
     },
 }
 
+const Z_AXIS = new THREE.Vector3(0, 0, 1);
+const FULL_ROTATION = Math.PI * 2;
 
-export class GeneratedGeometry extends BufferGeometry {
+export class GeneratedGeometry extends THREE.BufferGeometry {
 
     constructor(shapeName = 'B2', height = 25, theta = 0, resolution = 180) {
 
         super();
-        
+
         const shape = shapes[shapeName];
 
         let splines, sampleCount;
 
+        let pointTransformation;
+
         if(shape.type === 'EXTRUSION') {
             const offset = height / resolution;
             const delta =  theta / resolution;
-            splines = extrutionSplines(shape.spline, resolution, offset, delta);
             sampleCount = resolution * 5;
+            pointTransformation = p => p.applyAxisAngle(Z_AXIS, delta).add(new THREE.Vector3(0, 0, offset));
         } 
         else if(shape.type === 'ROTATION') {
-            splines = rotationSplines(shape.spline, resolution);
+            const theta = FULL_ROTATION / resolution;
             sampleCount = resolution;
+            pointTransformation = p => p.applyAxisAngle(Z_AXIS, theta);
         }
 
-        const {positions, indices} = geometryPositionsFromSplines(splines, sampleCount);
+        const {positions, indices} = geometryPositionsFromSplines(shape.spline, resolution, sampleCount, pointTransformation);
         const normals = normalFromPosition(positions, 3);
 
         // this.setIndex( new BufferAttribute( indices, 1 ) );
         this.setIndex(indices);
-        this.setAttribute( 'position', new BufferAttribute( positions, 3 ) );
-        this.setAttribute( 'normal', new BufferAttribute( normals, 3 ) );
-        // this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
+		this.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+		this.setAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
+		// this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
 
         // TODO(nacho): porque¿?¿?¿
         this.computeBoundingSphere();
     }
 }
 
-function geometryPositionsFromSplines(splines, samplesCount, nc=3) {
+function geometryPositionsFromSplines(spline, splineCount, samplesCount, pointTransformation, nc=3) {
     // nc == numero de componentes de los vectores de postion
 
     // s2: -–-----s21-------s22
 
     // s1: -–-----s11-------s12
 
-    const numVertices = samplesCount * (splines.length - 1) * 4; // 4 porque usamos indices para no repetir
-    
+    const numVertices = samplesCount * splineCount * 4; // 4 porque usamos indices para no repetir
+
     const positions = new Float32Array(numVertices * nc);
     const indices = [];
-    
+
     let posNdx = 0;
     let ndx = 0;
 
-    for (const [s1, s2] of zip(splines, splines.slice(1))) {
+    let points = [];
+    let nextPoints = [];
+
+    for(let i = 0; i <= samplesCount; i++) {
+        let point = spline.getPoint(i / samplesCount);
+        if(point.isVector2) {
+            point = new THREE.Vector3(point.x, point.y, 0);
+        }
+        nextPoints.push(point);
+    }
+
+    for (let k = 0; k < splineCount; k++) {
+
+        points = nextPoints;
+        nextPoints = [];
+
+        for(let i = 0; i <= samplesCount; i++) {
+            nextPoints.push(pointTransformation(points[i].clone()));
+        }
 
         for (let i = 0; i < samplesCount; i++) {
 
-            const t1 = i / samplesCount;
-            const t2 = (i + 1) / samplesCount;
-
-            const s11 = s1.getPoint(t1);
-            const s12 = s1.getPoint(t2);
-            const s21 = s2.getPoint(t1);
-            const s22 = s2.getPoint(t2);
-
+            const s11 = points[i];
+            const s12 = points[i+1];
+            const s21 = nextPoints[i];
+            const s22 = nextPoints[i+1];
+            
             positions.set(s11.toArray(), posNdx); posNdx += nc;
             positions.set(s12.toArray(), posNdx); posNdx += nc;
             positions.set(s21.toArray(), posNdx); posNdx += nc;
@@ -104,9 +125,9 @@ function normalFromPosition(position, nc=3) {
 
     const normal = new Float32Array(position.length);
     // Calculo de las normales de cada vértice de cada triangulo
-    const pA = new Vector3();
-    const pB = new Vector3();
-    const pC = new Vector3();
+    const pA = new THREE.Vector3();
+    const pB = new THREE.Vector3();
+    const pC = new THREE.Vector3();
 
     const np = 4
     // np = cantidad de puntos que conforman un cuadrado

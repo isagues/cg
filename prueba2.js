@@ -2,8 +2,8 @@ import * as THREE from '../build/three.module.js';
 
 
 import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
-import { GeneratedGeometry } from './geometries.js'
-import { setMaterials, setRotations } from './utils.js'
+import { GeneratedGeometry, shapes } from './geometries.js'
+import { setMaterials } from './utils.js'
 import { GUI } from './dat.gui.module.js';
 
 let camera, scene, renderer, controls;
@@ -53,7 +53,6 @@ let geometryController = {
 
 let meshiMesh;
 const materials = setMaterials();
-const rotations = setRotations();
 
 init();
 animate();
@@ -124,7 +123,7 @@ function setupGui() {
   var gui = new GUI();
 
   var geometry = gui.addFolder('Geometries');
-  geometry.add(geometryController, 'geometryCode', [ 'B2', 'A3' ]).name('Code').listen();
+  geometry.add(geometryController, 'geometryCode', Object.keys(shapes)).name('Code').listen();
   geometry.add(geometryController, 'geometryHeight', 0, 400).name('Height').listen();
   geometry.add(geometryController, 'geometryRotation',  0, Math.PI * 2).name('Rotation').listen();
   geometry.add(geometryController, 'geometryResolution',  10, 60).name('Resolution').listen();
