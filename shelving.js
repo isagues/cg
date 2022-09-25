@@ -63,15 +63,10 @@ export class Shelving {
                         0,
                         (depth/(colRows - 1))/2
                     );
-                    
-                    const geometry = new THREE.BoxGeometry( 10, 10, 10 );
-                    const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-                    const cube = new THREE.Mesh( geometry, material );
-                    cube.position.copy(centerPos);
-                    group.add( cube );
+
                     structure.add(group);
                     
-                    depthSlots.push({group: group, empty: true, getCenterPos: () => group.localToWorld(centerPos.clone())});
+                    depthSlots.push({group: group, empty: true, centerPos: centerPos, getWorldPos: () => group.localToWorld(centerPos.clone())});
                 }
                 levelSlots.push(depthSlots);
             }
@@ -82,10 +77,10 @@ export class Shelving {
     }
 
     dropPiece(piece, liftPosition) {
-      debugger;
       let nearestSlot = this.nearestSlot(liftPosition);
 
       if (nearestSlot.distance < DISTANCE_TO_SHELF && nearestSlot.slot.empty) {
+        piece.position.copy(nearestSlot.slot.centerPos);
         nearestSlot.slot.group.add(piece);
         return true;
       }
@@ -95,8 +90,8 @@ export class Shelving {
     nearestSlot(position) {
       const min = this.slots
         .flat(2)
-        .reduce((p, c) => position.distanceTo(p.getCenterPos()) > position.distanceTo(c.getCenterPos()) ? c : p)
+        .reduce((p, c) => position.distanceTo(p.getWorldPos()) > position.distanceTo(c.getWorldPos()) ? c : p)
         ;
-      return {slot: min, distance: position.distanceTo(min.getCenterPos())};
+      return {slot: min, distance: position.distanceTo(min.getWorldPos())};
     }
 }

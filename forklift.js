@@ -219,12 +219,10 @@ export class Forklift {
     grab(piece, piecePosition) {
       
       let liftPosition = new THREE.Vector3();
-      this.components.lift.getWorldPosition(liftPosition); //TODO agregar distancia del lift
-      debugger;
-      if (this.piece === undefined && piece !== undefined && piecePosition !== undefined && areVectorClose(piecePosition, liftPosition)) { //
+      this.components.lift.getWorldPosition(liftPosition); 
+      if (piece !== undefined && piecePosition !== undefined && areVectorClose(piecePosition, liftPosition)) { //
         this.piece = piece;
         this.piece.position.y = 0;
-        this.piece.position.x = 5;
         this.components.lift.add(this.piece);
         return true;
       }
