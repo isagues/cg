@@ -54,7 +54,7 @@ export class Printer {
       return liftHead;
     }
 
-    createLift(printerBasePosition) {
+    createLift() {
         const structure = new THREE.Group();
 
         const height = this.maxPieceHeight * 2;
@@ -104,7 +104,11 @@ export class Printer {
             this.animationFrame(geometryController, i / this.steps);
           }, i * 50);      
         }
-        this.printing = false;
+        setTimeout(() => { 
+          this.printing = false;
+          this.piece.getWorldPosition(this.piecePosition);
+        }, this.steps * 50);  
+        
     }
 
     animationFrame(geometryController, progress) {
@@ -126,7 +130,9 @@ export class Printer {
     }
 
     takePiece() {
-      return this.piece;
+      if (this.piece !== undefined && !this.printing) {
+        return this.piece;
+      } 
     }
 
     renderGeometry(geometryController, progress) {      
@@ -137,11 +143,7 @@ export class Printer {
       this.piece.position.y = this.printerHeight;
       this.piece.rotateX(-Math.PI / 2);
       this.printer.add(this.piece);
-  }
-
-  setPiecePosition() {
-      this.piece.getWorldPosition(this.piecePosition);
-      this.piecePosition.y = this.piecePosition.y - this.printerHeight;
+      
   }
   
 }
