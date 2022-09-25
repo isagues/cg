@@ -40,43 +40,49 @@ const FULL_ROTATION = Math.PI * 2;
 
 export class GeneratedGeometry extends THREE.BufferGeometry {
 
-    constructor(shapeName = 'B2', height = 25, theta = 0, resolution = 180) {
+    constructor(shapeName = 'B2', height = 25, theta = 0, resolution = 180, progress=1) {
 
         super();
 
         const shape = shapes[shapeName];
 
-        let splines, sampleCount;
+        let sampleCount;
+        let splineProgres = 1;
+        let sampleProgres = 1;
 
         let pointTransformation;
 
         if (shape.type === 'EXTRUSION') {
             const offset = height / resolution;
             const delta = theta / resolution;
+            
             sampleCount = resolution * 5;
+            splineProgres = progress;
+            
             pointTransformation = p => p.applyAxisAngle(Z_AXIS, delta).add(new THREE.Vector3(0, 0, offset));
         }
         else if (shape.type === 'ROTATION') {
             const theta = FULL_ROTATION / resolution;
+            
             sampleCount = resolution;
+            sampleProgres = progress;
+
             pointTransformation = p => p.applyAxisAngle(Z_AXIS, theta);
         }
 
-        const { positions, indices } = geometryPositionsFromSplines(shape.spline, resolution, sampleCount, pointTransformation);
+        const { positions, indices } = geometryPositionsFromSplines(shape.spline, resolution, sampleCount, pointTransformation, splineProgres, sampleProgres);
         const normals = normalFromPosition(positions, 3);
 
-        // this.setIndex( new BufferAttribute( indices, 1 ) );
         this.setIndex(indices);
         this.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         this.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-        // this.setAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
 
         // TODO(nacho): porque¿?¿?¿
         this.computeBoundingSphere();
     }
 }
 
-function geometryPositionsFromSplines(spline, splineCount, samplesCount, pointTransformation, nc = 3) {
+function geometryPositionsFromSplines(spline, splineCount, samplesCount, pointTransformation, splineProgres=1, sampleProgres=1, nc = 3) {
     // nc == numero de componentes de los vectores de postion
 
     // s2: -–-----s21-------s22
@@ -94,7 +100,10 @@ function geometryPositionsFromSplines(spline, splineCount, samplesCount, pointTr
     let points = [];
     let nextPoints = [];
 
-    for (let i = 0; i <= samplesCount; i++) {
+    const effectiveSampleCount = Math.floor(samplesCount * sampleProgres);
+    const effectiveSplineCount = Math.floor(splineCount * splineProgres);
+
+    for (let i = 0; i <= effectiveSampleCount; i++) {
         let point = spline.getPoint(i / samplesCount);
         if (point.isVector2) {
             point = new THREE.Vector3(point.x, point.y, 0);
@@ -102,16 +111,16 @@ function geometryPositionsFromSplines(spline, splineCount, samplesCount, pointTr
         nextPoints.push(point);
     }
 
-    for (let k = 0; k < splineCount; k++) {
+    for (let k = 0; k < effectiveSplineCount; k++) {
 
         points = nextPoints;
         nextPoints = [];
 
-        for (let i = 0; i <= samplesCount; i++) {
+        for (let i = 0; i <= effectiveSampleCount; i++) {
             nextPoints.push(pointTransformation(points[i].clone()));
         }
 
-        for (let i = 0; i < samplesCount; i++) {
+        for (let i = 0; i < effectiveSampleCount; i++) {
 
             const s11 = points[i];
             const s12 = points[i + 1];

@@ -4,7 +4,7 @@ import { GeneratedGeometry } from './geometries.js'
 
 export class Printer {
     
-    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=3) {
+    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=100) {
         this.position = position;
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
@@ -100,22 +100,20 @@ export class Printer {
         this.printing = true;
         for (let i = 1; i <= this.steps; i++) {
           setTimeout(() => { 
-            this.animationFrame(geometryController, i * this.heightInterval);
-          }, i * 500);      
+            this.animationFrame(geometryController, i / this.steps);
+          }, i * 50);      
         }
         this.printing = false;
     }
 
-    animationFrame(geometryController, height) {
+    animationFrame(geometryController, progress) {
       this.removePiece();
-      this.upLiftHead();
-      this.renderGeometry(geometryController, height);
+      this.renderGeometry(geometryController, progress);
+      this.upLiftHead(new THREE.Box3().setFromObject(this.piece).getSize(new THREE.Vector3()).y);
     }
 
-    upLiftHead() {
-      if(this.liftHead.position.y < this.maxPieceHeight + this.liftHeight) {
-        this.liftHead.translateY((this.heightInterval + 2));
-      }
+    upLiftHead(height) {
+      this.liftHead.position.y = this.printerHeight + height + 5;
     }
 
     resetLift(){
@@ -130,14 +128,14 @@ export class Printer {
       return this.piece;
     }
 
-    renderGeometry(geometryController, height) {      
-      const geometry = new GeneratedGeometry(geometryController.geometryCode, height, geometryController.geometryRotation, Math.round(geometryController.geometryResolution));
+    renderGeometry(geometryController, progress) {      
+      const geometry = new GeneratedGeometry(geometryController.geometryCode, this.maxPieceHeight, geometryController.geometryRotation, Math.round(geometryController.geometryResolution), progress);
       
       this.piece = new THREE.Mesh( geometry, this.materials[ geometryController.geometryMaterial ] );
-      this.piece.position.y = this.printerHeight + height;
-      this.piece.rotateX(Math.PI / 2);
+
+      this.piece.position.y = this.printerHeight;
+      this.piece.rotateX(-Math.PI / 2);
       this.printer.add(this.piece);
-      this.setPiecePosition(height);
   }
 
   setPiecePosition() {
