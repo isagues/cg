@@ -9,6 +9,7 @@ export class Printer {
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
         this.maxPieceHeight = maxPieceHeight;
+        this.pieceWidth = this.printerRadius * 0.8;
         this.steps = steps;
         this.liftHeight = this.printerHeight + 5;
         this.heightInterval = this.maxPieceHeight / this.steps;
@@ -136,7 +137,7 @@ export class Printer {
     }
 
     renderGeometry(geometryController, progress) {      
-      const geometry = new GeneratedGeometry(geometryController.geometryCode, this.maxPieceHeight, geometryController.geometryRotation, Math.round(geometryController.geometryResolution), progress);
+      const geometry = new GeneratedGeometry(geometryController.geometryCode, this.maxPieceHeight, this.pieceWidth, geometryController.geometryRotation, Math.round(geometryController.geometryResolution), progress);
       
       this.piece = new THREE.Mesh( geometry, this.materials[ geometryController.geometryMaterial ] );
 

@@ -2,35 +2,35 @@ import * as THREE from '../build/three.module.js';
 
 export const shapes = {
     B1: {
-        spline: createB1Curve(25),
+        getSpline: (width, height) => createB1Curve(width),
         type: 'EXTRUSION',
     },
     B2: {
-        spline: createB2Curve(25),
+        getSpline: (width, height) => createB2Curve(width),
         type: 'EXTRUSION',
     },
     B3: {
-        spline: createB3Curve(25),
+        getSpline: (width, height) => createB3Curve(width),
         type: 'EXTRUSION',
     },
     B4: {
-        spline: createB4Curve(25),
+        getSpline: (width, height) => createB4Curve(width),
         type: 'EXTRUSION',
     },
     A1: {
-        spline: createA1Cruve(25, 30),
+        getSpline: (width, height) => createA1Cruve(width, height),
         type: 'ROTATION',
     },
     A2: {
-        spline: createA2Cruve(25, 30),
+        getSpline: (width, height) => createA2Cruve(width, height),
         type: 'ROTATION',
     },
     A3: {
-        spline: createA3Cruve(25, 30),
+        getSpline: (width, height) => createA3Cruve(width, height),
         type: 'ROTATION',
     },
     A4: {
-        spline: createA4Cruve(25, 30),
+        getSpline: (width, height) => createA4Cruve(width, height),
         type: 'ROTATION',
     },
 }
@@ -40,7 +40,7 @@ const FULL_ROTATION = Math.PI * 2;
 
 export class GeneratedGeometry extends THREE.BufferGeometry {
 
-    constructor(shapeName = 'B2', height = 25, theta = 0, resolution = 180, progress=1) {
+    constructor(shapeName = 'B2', height = 25, width = 25, theta = 0, resolution = 180, progress=1) {
 
         super();
 
@@ -51,6 +51,8 @@ export class GeneratedGeometry extends THREE.BufferGeometry {
         let sampleProgres = 1;
 
         let pointTransformation;
+
+        let spline = shape.getSpline(width, height);
 
         if (shape.type === 'EXTRUSION') {
             const offset = height / resolution;
@@ -70,7 +72,7 @@ export class GeneratedGeometry extends THREE.BufferGeometry {
             pointTransformation = p => p.applyAxisAngle(Z_AXIS, theta);
         }
 
-        const { positions, indices } = geometryPositionsFromSplines(shape.spline, resolution, sampleCount, pointTransformation, splineProgres, sampleProgres);
+        const { positions, indices } = geometryPositionsFromSplines(spline, resolution, sampleCount, pointTransformation, splineProgres, sampleProgres);
         const normals = normalFromPosition(positions, 3);
 
         this.setIndex(indices);
@@ -272,7 +274,7 @@ function createA1Cruve(width, height) {
 
     const curve = new THREE.Path();
     const d = width / 2 / 10;
-    const h = height / 11;
+    const h = height / 10;
 
     curve.add(new THREE.LineCurve3(
         new THREE.Vector3(0, 0, 0),
@@ -319,7 +321,7 @@ function createA2Cruve(width, height) {
 
     const curve = new THREE.CurvePath();
     const d = width / 2 / 10;
-    const h = height / 10;
+    const h = height / 8;
 
     curve.add(new THREE.CatmullRomCurve3([
         new THREE.Vector3(0, 0, 0),
@@ -338,7 +340,7 @@ function createA3Cruve(width, height) {
 
     const curve = new THREE.CurvePath();
     const d = width / 2 / 10;
-    const h = height / 10;
+    const h = height / 9;
 
 
     curve.add(new THREE.LineCurve3(
@@ -371,7 +373,7 @@ function createA4Cruve(width, height) {
 
     const curve = new THREE.CurvePath();
     const d = width / 2 / 10;
-    const h = height / 10;
+    const h = height / 7.3;
 
     curve.add(new THREE.CatmullRomCurve3([
         new THREE.Vector3(0, 0, 0),
