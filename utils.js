@@ -14,9 +14,9 @@ import * as THREE from '../build/three.module.js';
 export function setMaterials(){
     const materials = {};
     materials[ 'wireframe' ] = new THREE.MeshBasicMaterial( { wireframe: true } );
-    materials[ 'flat' ] = new THREE.MeshPhongMaterial( { specular: 0x000000, flatShading: true, side: THREE.DoubleSide } );
-    materials[ 'smooth' ] = new THREE.MeshLambertMaterial( { side: THREE.DoubleSide } );
-    materials[ 'glossy' ] = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide } );
+    materials[ 'flat' ] = new THREE.MeshPhongMaterial( { specular: 0xEE2299, flatShading: true, side: THREE.DoubleSide } );
+    materials[ 'smooth' ] = new THREE.MeshLambertMaterial( { color: 0xEE2299, side: THREE.DoubleSide } );
+    materials[ 'glossy' ] = new THREE.MeshPhongMaterial( { color: 0xEE2299, side: THREE.DoubleSide } );
 
   return materials;
 }

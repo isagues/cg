@@ -4,12 +4,12 @@ import { GeneratedGeometry } from './geometries.js'
 
 export class Printer {
     
-    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=100) {
+    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 20, steps=100) {
         this.position = position;
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
         this.maxPieceHeight = maxPieceHeight;
-        this.pieceWidth = this.printerRadius * 0.8;
+        this.pieceWidth = this.printerRadius * 0.4;
         this.steps = steps;
         this.liftHeight = this.printerHeight + 5;
         this.heightInterval = this.maxPieceHeight / this.steps;
