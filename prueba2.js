@@ -163,7 +163,6 @@ function render() {
 
 function renderGeometry() {
 
-  // debugger;
   if ( meshiMesh !== undefined ) {
 
       meshiMesh.geometry.dispose();

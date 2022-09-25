@@ -76,6 +76,12 @@
       scene.background = new THREE.Color(0xa0a0a0);
       // scene.fog = new THREE.Fog(0xa0a0a0, 10, 500);
 
+      const size = 10;
+      const divisions = 10;
+
+      const gridHelper = new THREE.GridHelper( size, divisions, 0x440000, 0x008800 );
+      scene.add( gridHelper );
+
       const orbitCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 550);
       orbitCamera.position.set(0, 100, 100);
       camera = orbitCamera;
@@ -212,7 +218,7 @@
     }
 
     function createWalls(scene) {
-      const wall = new THREE.BoxGeometry( 1000, 1000, 2);
+      const wall = new THREE.BoxGeometry( 2000, 2000, 1);
 
       const floor_material = new THREE.MeshBasicMaterial( { color: 0x999999 } ); 
       const floor = new THREE.Mesh( wall, floor_material );
@@ -224,31 +230,31 @@
       const material_3 = new THREE.MeshBasicMaterial( { color: 0xffff00 } ); 
       const wall_1 = new THREE.Mesh( wall, material_3 );
       wall_1.rotation.x = - Math.PI;
-      wall_1.position.y = 500;
-      wall_1.position.z = 250;
+      wall_1.position.y = 1000;
+      wall_1.position.z = 500;
       wall_1.receiveShadow = true;
       scene.add(wall_1);
 
       const wall_2 = new THREE.Mesh( wall, material_3 );
       wall_2.rotation.x = - Math.PI;
-      wall_2.position.z = -250;
-      wall_2.position.y = 500;
+      wall_2.position.z = -500;
+      wall_2.position.y = 1000;
       wall_2.receiveShadow = true;
       scene.add(wall_2);
 
       const wall_3 = new THREE.Mesh( wall, material_3 );
       wall_3.rotation.x = - Math.PI;
       wall_3.rotation.y = Math.PI / 2;
-      wall_3.position.x = -250;
-      wall_3.position.y = 500;
+      wall_3.position.x = -500;
+      wall_3.position.y = 1000;
       wall_3.receiveShadow = true;
       scene.add(wall_3);
 
       const wall_4 = new THREE.Mesh( wall, material_3 );
       wall_4.rotation.x = - Math.PI;
       wall_4.rotation.y = Math.PI / 2;
-      wall_4.position.x = 250;
-      wall_4.position.y = 500;
+      wall_4.position.x = 500;
+      wall_4.position.y = 1000;
       wall_4.receiveShadow = true;
       scene.add(wall_4);
     }

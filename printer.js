@@ -4,7 +4,7 @@ import { GeneratedGeometry } from './geometries.js'
 
 export class Printer {
     
-    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 100, steps=3) {
+    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=3) {
         this.position = position;
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
@@ -140,9 +140,9 @@ export class Printer {
       this.setPiecePosition(height);
   }
 
-  setPiecePosition(height) {
+  setPiecePosition() {
       this.piece.getWorldPosition(this.piecePosition);
-      this.piecePosition.y = this.piecePosition.y - height;
+      this.piecePosition.y = this.piecePosition.y - this.printerHeight;
   }
   
 }
