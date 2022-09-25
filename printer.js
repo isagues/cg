@@ -48,6 +48,7 @@ export class Printer {
       const lift      = new THREE.BoxGeometry(30, 1, 30);
       const liftPlain = new THREE.Mesh( lift, liftMaterial );
       liftPlain.position.x = liftHeadCube.position.x;
+      liftPlain.position.y = liftHeadCube.position.y - cube_size/2;
       liftHead.add(liftPlain);
 
       return liftHead;
