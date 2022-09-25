@@ -223,8 +223,7 @@ export class Forklift {
       debugger;
       if (this.piece === undefined && piece !== undefined && piecePosition !== undefined && areVectorClose(piecePosition, liftPosition)) { //
         this.piece = piece;
-        debugger;
-        this.piece.position.y = pieceHeight;
+        this.piece.position.y = 0;
         this.piece.position.x = 5;
         this.components.lift.add(this.piece);
         return true;

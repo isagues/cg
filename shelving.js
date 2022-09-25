@@ -46,10 +46,37 @@ export class Shelving {
             structure.add(shelf); 
         }
 
-        // this.lift = new THREE.Mesh(liftGeometry, liftMaterial);
-        // this.lift.position.x = spacing;
-        // this.lift.position.y = lerp(0, height, liftPosition);
-        // structure.add(this.lift);
+        this.slots = []
+        for(let i = 0; i < shelfLevels; i++) {
+            const levelSlots = [];
+            for(let j = 0; j < colRows - 1; j++) {
+                const depthSlots = [];
+                for(let k = 0; k < colPerRow - 1; k++) {
+                    const group = new THREE.Group();
+                    group.position.y = lerp(0, height, (i+1)/(shelfLevels+1));
+                    group.position.z = lerp(- (depth/2 - 1), (depth/2 - 1), j / (colRows-1));
+                    group.position.x = lerp(-(width/2 - 1), (width/2 - 1), k / (colPerRow-1));
+                    
+                    const centerPos = new THREE.Vector3(
+                        (width/(colPerRow - 1))/ 2,
+                        0,
+                        (depth/(colRows - 1))/2
+                    );
+                    
+
+                    const geometry = new THREE.BoxGeometry( 10, 10, 10 );
+                    const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+                    const cube = new THREE.Mesh( geometry, material );
+                    cube.position.copy(centerPos);
+                    group.add( cube );
+                    structure.add(group);
+                    
+                    depthSlots.push({group: group, centerPos: centerPos, getCenterPos: () => group.localToWorld(centerPos.clone())});
+                }
+                levelSlots.push(depthSlots);
+            }
+            this.slots.push(levelSlots);
+        }
 
         return structure;
     }

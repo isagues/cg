@@ -37,12 +37,13 @@
     import { Keyboard } from './keyboard.js';
     import { Shelving } from './shelving.js';
     import { Printer } from './printer.js';
+    import { shapes } from './geometries.js';
     import { GUI } from './dat.gui.module.js';
     
     let camera, scene, renderer;
     let textureLoader;
 
-    let forklift, printer;
+    let forklift, printer, shelving;
 
     let grabbed = false;
 
@@ -126,8 +127,9 @@
       printer = new Printer();
       scene.add( printer.printer);
 
-      const shelving = new Shelving();
+      shelving = new Shelving();
       scene.add( shelving.object );
+      console.log(shelving.slots);
 
       forklift = new Forklift(window.innerWidth / window.innerHeight);
       scene.add( forklift.car );
@@ -287,7 +289,7 @@
       var gui = new GUI();
 
       var geometry = gui.addFolder('Geometries');
-      geometry.add(geometryController, 'geometryCode', [ 'B2', 'A3' ]).name('Code').listen();
+      geometry.add(geometryController, 'geometryCode', Object.keys(shapes)).name('Code').listen();
       geometry.add(geometryController, 'geometryRotation',  0, Math.PI * 2).name('Rotation').listen();
       geometry.add(geometryController, 'geometryResolution',  10, 60).name('Resolution').listen();
       geometry.add(geometryController, 'geometryMaterial', [ 'wireframe', 'flat', 'smooth', 'glossy' ]).name('Material').listen();
@@ -338,6 +340,15 @@
         grabbed = true;
         printer.removePiece();
       }
+    }
+
+    function nearestSlot() {
+      const liftV3 = forklift.components.lift.getWorldPosition(new THREE.Vector3());
+      const min = shelving.slots
+        .flat(2)
+        .reduce((p, c) => liftV3.distanceTo(p.getCenterPos()) > liftV3.distanceTo(c.getCenterPos()) ? c : p)
+        ;
+      return {slot: min, distance: liftV3.distanceTo(min.getCenterPos())};
     }
 
   </script>
