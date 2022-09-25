@@ -331,23 +331,22 @@
     }
 
     function takePieceAndRemove() {
+      let piece;
       if (grabbed) {
-
+        const liftV3 = forklift.components.lift.getWorldPosition(new THREE.Vector3());
+        piece = forklift.getPîece();
+        if(shelving.dropPiece(piece, liftV3)) {
+          forklift.removePiece();
+          grabbed = false;
+        }
       }
-      let piece = printer.takePiece();
-      if (forklift.grab(piece, printer.piecePosition, printer.maxPieceHeight)) {
-        grabbed = true;
-        printer.removePiece();
+      else {
+        piece = printer.takePiece();
+        if (forklift.grab(piece, printer.piecePosition, printer.maxPieceHeight)) {
+          grabbed = true;
+          printer.removePiece();
+        }
       }
-    }
-
-    function nearestSlot() {
-      const liftV3 = forklift.components.lift.getWorldPosition(new THREE.Vector3());
-      const min = shelving.slots
-        .flat(2)
-        .reduce((p, c) => liftV3.distanceTo(p.getCenterPos()) > liftV3.distanceTo(c.getCenterPos()) ? c : p)
-        ;
-      return {slot: min, distance: liftV3.distanceTo(min.getCenterPos())};
     }
 
   </script>

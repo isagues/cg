@@ -216,7 +216,7 @@ export class Forklift {
         this.liftSpeed = 0;
     }
 
-    grab(piece, piecePosition, pieceHeight) {
+    grab(piece, piecePosition) {
       
       let liftPosition = new THREE.Vector3();
       this.components.lift.getWorldPosition(liftPosition); //TODO agregar distancia del lift
@@ -229,6 +229,16 @@ export class Forklift {
         return true;
       }
       return false;
+    }
+
+    getPîece() {
+      return this.piece;
+    }
+
+    removePiece() {
+      if (this.piece !== undefined){
+        this.components.lift.remove(this.piece);
+      }
     }
 
     updateLiftPosition() {
