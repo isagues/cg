@@ -142,8 +142,6 @@ export class Printer {
 
       this.piece.position.y = this.printerHeight;
       this.piece.rotateX(-Math.PI / 2);
-      this.printer.add(this.piece);
-      
+      this.printer.add(this.piece); 
   }
-  
 }
