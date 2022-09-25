@@ -43,6 +43,8 @@
 
     let forklift, printer;
 
+    let grabbed = false;
+
     let geometryCode;
     let geometryRotation;
     let geometryResolution;
@@ -146,6 +148,10 @@
       keyboard.handlers['KeyQ'] = {
         press: () => forklift.down(),
         release: () => forklift.stopLiftMovement()
+      }
+      keyboard.handlers['KeyG'] = {
+        press: () => takePieceAndRemove(),
+        // release: () => forklift.stopLiftMovement()
       }
       keyboard.handlers['KeyP'] = {
         press: () => controls.zoomIn(),
@@ -292,6 +298,18 @@
 
     function renderGeometry() {
       printer.renderPiece(geometryController);
+    }
+
+    function takePieceAndRemove() {
+      if (grabbed) {
+
+      }
+      
+      let piece = printer.takePiece();
+      if (forklift.grab(piece, printer.piecePosition, printer.maxPieceHeight)) {
+        grabbed = true;
+        printer.removePiece();
+      }
     }
 
   </script>

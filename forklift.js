@@ -1,5 +1,5 @@
 import * as THREE from '../build/three.module.js';
-import { lerp } from './utils.js';
+import { lerp, areVectorClose } from './utils.js';
 
 const MOVEMENT_SPEED = 1;
 const ROTATION_SPEED = 0.01;
@@ -21,6 +21,7 @@ export class Forklift {
         this.liftHeight = 100;
         this.components = {}
         this.car = this.createCar();
+        this.piece;
         this.addWheels();
 
         this.createCameras();
@@ -62,11 +63,13 @@ export class Forklift {
 
             structure.add(across);
         }
+        this.components.lift = new THREE.Group();
+        const liftFloor = new THREE.Mesh(liftGeometry, liftMaterial);
+        this.components.lift.add(liftFloor);
+        this.components.lift.position.x = spacing;
+        this.components.lift.position.y = lerp(0, this.liftHeight, liftPosition);
 
-        this.lift = new THREE.Mesh(liftGeometry, liftMaterial);
-        this.lift.position.x = spacing;
-        this.lift.position.y = lerp(0, this.liftHeight, liftPosition);
-        structure.add(this.lift);
+        structure.add(this.components.lift);
 
         return structure;
     }
@@ -213,18 +216,33 @@ export class Forklift {
         this.liftSpeed = 0;
     }
 
+    grab(piece, piecePosition, pieceHeight) {
+      
+      let liftPosition = new THREE.Vector3();
+      this.components.lift.getWorldPosition(liftPosition); //TODO agregar distancia del lift
+      if (this.piece === undefined && piecePosition !== undefined ) { //&& areVectorClose(piecePosition, liftPosition)
+        this.piece = piece;
+        debugger;
+        this.piece.position.y = this.piece.position.y;
+        this.piece.position.x = 5;
+        this.components.lift.add(this.piece);
+        return true;
+      }
+      return false;
+    }
+
     updateLiftPosition() {
         if (this.liftSpeed == 0) return;
-        if (this.lift.position.y + this.liftSpeed >= this.liftHeight) {
-            this.lift.position.setY(this.liftHeight);
-            this.liftSpee = 0
+        if (this.components.lift.position.y + this.liftSpeed >= this.liftHeight) {
+            this.components.lift.position.setY(this.liftHeight);
+            this.liftSpeed = 0
         }
-        else if (this.lift.position.y + this.liftSpeed <= 0) {
-            this.lift.position.setY(0);
-            this.liftSpee = 0
+        else if (this.components.lift.position.y + this.dd <= 0) {
+            this.components.lift.position.setY(0);
+            this.liftSpeed = 0
         }
         else {
-            this.lift.translateY(this.liftSpeed)
+            this.components.lift.translateY(this.liftSpeed)
         }
     }
 

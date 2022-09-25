@@ -21,6 +21,13 @@ export function setMaterials(){
   return materials;
 }
 
+export function areVectorClose( v1, v2, epsilon = 5 ) {
+
+  debugger;
+  return ( ( Math.abs( v1.x - v2.x ) < epsilon ) && ( Math.abs( v1.y - v2.y ) < epsilon ) && ( Math.abs( v1.z - v2.z ) < epsilon ) );
+
+}
+
 export function lerp(a, b, t) {
   return (a * (1.0 - t)) + (b * t);
 }

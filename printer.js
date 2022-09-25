@@ -4,12 +4,12 @@ import { GeneratedGeometry } from './geometries.js'
 
 export class Printer {
     
-    constructor(position = new THREE.Vector3(100, 0 ,0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=3) {
+    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 100, steps=3) {
         this.position = position;
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
         this.maxPieceHeight = maxPieceHeight;
-        this.steps = 3;
+        this.steps = steps;
         this.liftHeight = this.printerHeight + 5;
         this.heightInterval = this.maxPieceHeight / this.steps;
         this.printer = this.createPrinter();
@@ -17,6 +17,7 @@ export class Printer {
         this.printing = false;
         this.liftHead;
         this.piece;
+        this.piecePosition = new THREE.Vector3();
     }
 
     createLiftHead(columnPosition) {
@@ -61,7 +62,7 @@ export class Printer {
         const columnGeometry    = new THREE.CylinderGeometry(2, 2, height, 32);
         const column = new THREE.Mesh(columnGeometry, columnMaterial);
         column.position.x = this.printerRadius - 5;
-        column.position.y = this.printerHeight + printerBasePosition.y;
+        column.position.y = this.printerHeight + height / 2;
 
         structure.add(column);
 
@@ -86,9 +87,7 @@ export class Printer {
         const lift = this.createLift(printerBase.position);
         printer.add(lift);
 
-        printer.position.x = this.position.x;
-        printer.position.y = this.position.y;
-        printer.position.z = this.position.z;
+        printer.position.copy(this.position);
       
         return printer;
     }
@@ -108,14 +107,14 @@ export class Printer {
     }
 
     animationFrame(geometryController, height) {
-      if (this.piece !== undefined) this.printer.remove(this.piece);
-          this.upLiftHead();
-          this.renderGeometry(geometryController, height);
+      this.removePiece();
+      this.upLiftHead();
+      this.renderGeometry(geometryController, height);
     }
 
     upLiftHead() {
       if(this.liftHead.position.y < this.maxPieceHeight + this.liftHeight) {
-        this.liftHead.translateY((this.heightInterval + 5)/2);
+        this.liftHead.translateY((this.heightInterval + 2));
       }
     }
 
@@ -123,14 +122,27 @@ export class Printer {
       this.liftHead.position.y = this.liftHeight;
     }
 
+    removePiece(){
+      if (this.piece !== undefined) this.printer.remove(this.piece);
+    }
+
+    takePiece() {
+      return this.piece;
+    }
+
     renderGeometry(geometryController, height) {      
       const geometry = new GeneratedGeometry(geometryController.geometryCode, height, geometryController.geometryRotation, Math.round(geometryController.geometryResolution));
       
       this.piece = new THREE.Mesh( geometry, this.materials[ geometryController.geometryMaterial ] );
-      this.piece.position.y = this.liftHeight + height/2;
+      this.piece.position.y = this.printerHeight + height;
       this.piece.rotateX(Math.PI / 2);
-      
       this.printer.add(this.piece);
+      this.setPiecePosition(height);
+  }
+
+  setPiecePosition(height) {
+      this.piece.getWorldPosition(this.piecePosition);
+      this.piecePosition.y = this.piecePosition.y - height;
   }
   
 }
