@@ -72,20 +72,7 @@
       renderer.render( scene, camera );
     }
 
-    function init() {
-
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xa0a0a0);
-      // scene.fog = new THREE.Fog(0xa0a0a0, 10, 500);
-
-      const size = 10;
-      const divisions = 10;
-
-      const gridHelper = new THREE.GridHelper( size, divisions, 0x440000, 0x008800 );
-      scene.add( gridHelper );
-
-      textureLoader = new THREE.TextureLoader();
-
+    function createCamera() {
       const orbitCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
       orbitCamera.position.set(0, 100, 100);
       camera = orbitCamera;
@@ -105,9 +92,9 @@
       controls.enablePan = false;
       controls.target.set(0, 20, 0);
       controls.update();
-    
-      //
+    }
 
+    function createLights() {
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
       hemiLight.position.set(0, 100, 0);
       scene.add(hemiLight);
@@ -123,16 +110,9 @@
       dirLight.shadow.camera.far = 200;
       dirLight.shadow.mapSize.set(1024, 1024);
       scene.add(dirLight);
+    }
 
-      printer = new Printer();
-      scene.add( printer.printer);
-
-      shelving = new Shelving();
-      scene.add( shelving.object );
-
-      forklift = new Forklift(window.innerWidth / window.innerHeight);
-      scene.add( forklift.car );
-
+    function bindKeys() {
       const keyboard = new Keyboard(document);
 
       keyboard.handlers['KeyW'] = {
@@ -204,10 +184,43 @@
       keyboard.handlers['Digit6'] = {
         press: () => camera = forklift.cameras.side
       }
+    }
 
-      const axesHelper = new THREE.AxesHelper(150);
-      scene.add(axesHelper);
-      scene.add(new THREE.GridHelper(150));
+    function init() {
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xa0a0a0);
+      // scene.fog = new THREE.Fog(0xa0a0a0, 10, 500);
+
+      createCamera();
+      createLights();
+
+      const size = 10;
+      const divisions = 10;
+
+      const gridHelper = new THREE.GridHelper( size, divisions, 0x440000, 0x008800 );
+      scene.add( gridHelper );
+
+      textureLoader = new THREE.TextureLoader();
+    
+      //
+
+      printer = new Printer();
+      scene.add( printer.printer);
+
+      shelving = new Shelving();
+      scene.add( shelving.object );
+
+      forklift = new Forklift({
+            position: new THREE.Vector3(0, 0, 0),
+            ratio: window.innerWidth / window.innerHeight,
+            carWidth: 30,
+            carLength: 60,
+            liftHeight: 100
+        });
+      scene.add( forklift.car );
+
+      bindKeys();
 
       createWalls(scene);
       
