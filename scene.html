@@ -347,7 +347,7 @@
       let piece;
       if (grabbed) {
         const liftV3 = forklift.components.lift.getWorldPosition(new THREE.Vector3());
-        piece = forklift.getPîece();
+        piece = forklift.getPiece();
         if(shelving.dropPiece(piece, liftV3)) {
           forklift.removePiece();
           grabbed = false;
