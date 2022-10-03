@@ -8,7 +8,7 @@ import * as THREE from './libs/three.module.js';
     import { shapes } from './utils/geometries.js';
     import { GUI } from './libs/dat.gui.module.js';
     
-    let camera, scene, renderer;
+    let camera, scene, renderer, orbitCamera, controls;
     let textureLoader;
 
     let forklift, printer, shelving;
@@ -41,7 +41,7 @@ import * as THREE from './libs/three.module.js';
     }
 
     function createCamera() {
-      const orbitCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+      orbitCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
       orbitCamera.position.set(0, 100, 100);
       camera = orbitCamera;
 
@@ -53,7 +53,7 @@ import * as THREE from './libs/three.module.js';
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       document.body.appendChild(renderer.domElement);
 
-      const controls = new OrbitControls(orbitCamera, renderer.domElement);
+      controls = new OrbitControls(orbitCamera, renderer.domElement);
       controls.addEventListener('change', render);
       controls.minDistance = 50;
       controls.maxDistance = 500;
