@@ -18,12 +18,14 @@ import * as THREE from './libs/three.module.js';
     let geometryCode;
     let geometryRotation;
     let geometryResolution;
+    let geometryHeight;
     let geometryMaterial;
 
     let geometryController = {
       geometryCode: 'B2',
       geometryRotation: Math.PI / 2,
       geometryResolution: 40,
+      geometryHeight: 20,
       geometryMaterial: 'glossy',
       render: function() {
         renderGeometry();
@@ -272,6 +274,7 @@ import * as THREE from './libs/three.module.js';
       geometry.add(geometryController, 'geometryCode', Object.keys(shapes)).name('Code').listen();
       geometry.add(geometryController, 'geometryRotation',  0, Math.PI * 2).name('Rotation').listen();
       geometry.add(geometryController, 'geometryResolution',  10, 60).name('Resolution').listen();
+      geometry.add(geometryController, 'geometryHeight',  10, 30).name('Height').listen();
       geometry.add(geometryController, 'geometryMaterial', [ 'wireframe', 'flat', 'smooth', 'glossy' ]).name('Material').listen();
     
       geometry.open();
@@ -296,11 +299,13 @@ import * as THREE from './libs/three.module.js';
       if (geometryController.geometryCode !== geometryCode || 
         geometryController.geometryRotation !== geometryRotation || 
         geometryController.geometryResolution !== geometryResolution || 
+        geometryController.geometryHeight !== geometryHeight || 
         geometryController.geometryMaterial !== geometryMaterial) {
 
           geometryCode = geometryController.geometryCode;
           geometryRotation = geometryController.geometryRotation;
           geometryResolution = geometryController.geometryResolution;
+          geometryHeight = geometryController.geometryHeight;
           geometryMaterial = geometryController.geometryMaterial;
       }
 

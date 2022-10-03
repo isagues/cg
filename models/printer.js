@@ -4,7 +4,7 @@ import { GeneratedGeometry } from '../utils/geometries.js'
 
 export class Printer {
     
-    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 20, steps=100) {
+    constructor(position = new THREE.Vector3(100, 0, 0), printerRadius = 30, printerHeight = 30, maxPieceHeight = 50, steps=100) {
         this.position = position;
         this.printerRadius = printerRadius;
         this.printerHeight = printerHeight;
@@ -137,7 +137,7 @@ export class Printer {
     }
 
     renderGeometry(geometryController, progress) {      
-      const geometry = new GeneratedGeometry(geometryController.geometryCode, this.maxPieceHeight, this.pieceWidth, geometryController.geometryRotation, Math.round(geometryController.geometryResolution), progress);
+      const geometry = new GeneratedGeometry(geometryController.geometryCode, geometryController.geometryHeight, this.pieceWidth, geometryController.geometryRotation, Math.round(geometryController.geometryResolution), progress);
       
       this.piece = new THREE.Mesh( geometry, this.materials[ geometryController.geometryMaterial ] );
 
