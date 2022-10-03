@@ -1,5 +1,5 @@
-import * as THREE from '../build/three.module.js';
-import { lerp, areVectorClose } from './utils.js';
+import * as THREE from '../libs/three.module.js';
+import { lerp, areVectorClose } from '../utils/utils.js';
 
 const MOVEMENT_SPEED = 1;
 const ROTATION_SPEED = 0.01;

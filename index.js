@@ -1,44 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+import * as THREE from './libs/three.module.js';
 
-<head>
-  <title>three.js webgl - 3MF</title>
-  <link rel="icon" href="data:,">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <link type="text/css" rel="stylesheet" href="../examples/main.css">
-  <style>
-    body {
-      background-color: #a0a0a0;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="info">
-    <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> -
-    <a href="http://3mf.io" target="_blank" rel="noopener">3MF</a> file with materials
-  </div>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "../build/three.module.js"
-      }
-    }
-  </script>
-
-  <script type="module">
-
-    import * as THREE from '../build/three.module.js';
-
-    import { OrbitControls } from '../examples/jsm/controls/OrbitControls.js';
-    import { Forklift } from './forklift.js';
-    import { Keyboard } from './keyboard.js';
-    import { Shelving } from './shelving.js';
-    import { Printer } from './printer.js';
-    import { shapes } from './geometries.js';
-    import { GUI } from './dat.gui.module.js';
+    import { OrbitControls } from './libs/OrbitControls.js';
+    import { Forklift } from './models/forklift.js';
+    import { Keyboard } from './models/keyboard.js';
+    import { Shelving } from './models/shelving.js';
+    import { Printer } from './models/printer.js';
+    import { shapes } from './utils/geometries.js';
+    import { GUI } from './libs/dat.gui.module.js';
     
     let camera, scene, renderer;
     let textureLoader;
@@ -361,8 +329,3 @@
         }
       }
     }
-
-  </script>
-</body>
-
-</html>

@@ -1,15 +1,4 @@
-import * as THREE from '../build/three.module.js';
-
-// /**
-//  * Zips any number of arrays. It will always zip() the largest array returning undefined for shorter arrays.
-//  * @param  {...Array<any>} arrays 
-//  */
-// export function* zip(...arrays){
-//     const minLength = arrays.reduce((min, curIterable) => curIterable.length < min ? curIterable.length: min, 100000);
-//     for (let i = 0; i < minLength; i++) {
-//       yield arrays.map(array => array[i]);
-//     }
-//   }
+import * as THREE from '../libs/three.module.js';
 
 export function setMaterials(){
     const materials = {};

@@ -1,6 +1,6 @@
-import * as THREE from '../build/three.module.js';
-import { setMaterials } from './utils.js'
-import { GeneratedGeometry } from './geometries.js'
+import * as THREE from '../libs/three.module.js';
+import { setMaterials } from '../utils/utils.js'
+import { GeneratedGeometry } from '../utils/geometries.js'
 
 export class Printer {
     
