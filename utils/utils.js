@@ -15,7 +15,11 @@ export const textures = {
   'white_marble': loadTexture('Marble09_1K_BaseColor.png'),
   'stripes': loadTexture('patron3.png'),
   'pattern_1_a': loadTexture('Pattern02_1K_VarA.png'),
-  'pattern_1_b': loadTexture('Pattern02_1K_VarB.png')
+  'pattern_1_b': loadTexture('Pattern02_1K_VarB.png'),
+  'pattern_1_c': loadTexture('Pattern02_1K_VarC.png'),
+  'pattern_2_a': loadTexture('Pattern05_1K_VarA.png'),
+  'pattern_2_b': loadTexture('Pattern05_1K_VarB.png'),
+  'pattern_2_c': loadTexture('Pattern05_1K_VarC.png')
 }
 
 export function setMaterials(){
