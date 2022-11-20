@@ -46,11 +46,31 @@ export class Printer {
 
       liftHead.add(liftHeadCube);
 
-      const lift      = new THREE.BoxGeometry(30, 1, 30);
-      const liftPlain = new THREE.Mesh( lift, liftMaterial );
-      liftPlain.position.x = liftHeadCube.position.x;
-      liftPlain.position.y = liftHeadCube.position.y - cube_size/2;
-      liftHead.add(liftPlain);
+      const planeSide = 30;
+      const lift          = new THREE.Group();
+      const lift_plane    = new THREE.BoxGeometry(planeSide, 1, planeSide);
+      const liftPlain     = new THREE.Mesh( lift_plane, liftMaterial );
+      lift.position.x = liftHeadCube.position.x;
+      lift.position.y = liftHeadCube.position.y - cube_size/2;
+      lift.add(liftPlain);
+
+      const corners = [{x: -planeSide/2, z: -planeSide/2}, {x: -planeSide/2, z: planeSide/2}, {x: planeSide/2, z: -planeSide/2}, {x: planeSide/2, z: planeSide/2}];
+      for(const c of corners) {
+        const lightGroup = new THREE.Group();
+
+        const geometry = new THREE.SphereGeometry( 2, 32, 16 );
+        const material = new THREE.MeshBasicMaterial( { color: 0xBB4040 } );
+        const sphere = new THREE.Mesh( geometry, material );
+        // sphere.position.set(0,-1,0)
+        lightGroup.add( sphere );
+
+        const light = new THREE.PointLight(0xBB4040, 1, 100, 2);
+        lightGroup.add(light)
+
+        lightGroup.position.set(c.x, 0, c.z);
+        lift.add(lightGroup);
+      }
+      liftHead.add(lift);
 
       return liftHead;
     }
