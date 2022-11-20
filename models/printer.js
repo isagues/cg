@@ -203,7 +203,7 @@ export class Printer {
         texture.repeat.set( geometryController.textureRepetition, geometryController.textureRepetition );
         material.map = texture;
       }
-      this.piece = new THREE.Mesh( geometry, material );
+      this.piece = new THREE.Mesh( geometry, material.clone());
 
       this.piece.position.y = this.printerHeight;
       this.piece.rotateX(-Math.PI / 2);
