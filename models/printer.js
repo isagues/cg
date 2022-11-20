@@ -1,5 +1,5 @@
 import * as THREE from '../libs/three.module.js';
-import { materials, textures } from '../utils/utils.js'
+import { materials, textures, loadTexture } from '../utils/utils.js'
 import { GeneratedGeometry } from '../utils/geometries.js'
 
 export class Printer {

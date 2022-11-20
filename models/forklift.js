@@ -1,5 +1,5 @@
 import * as THREE from '../libs/three.module.js';
-import { lerp, areVectorClose } from '../utils/utils.js';
+import { lerp, areVectorClose, loadTexture } from '../utils/utils.js';
 
 const MOVEMENT_SPEED = 1;
 const ROTATION_SPEED = 0.01;
@@ -35,12 +35,8 @@ export class Forklift {
         lift.position.x = this.params.carLength/2;
         car.add(lift);
 
-        const car_texture = this.params.textureLoader.load('./textures/texturaGrua.jpg');
-        car_texture.wrapS = THREE.RepeatWrapping;
-        car_texture.wrapT = THREE.RepeatWrapping;
-        const car_normal_texture = this.params.textureLoader.load('./textures/texturaGruaNormalMap.jpg');
-        car_normal_texture.wrapS = THREE.RepeatWrapping;
-        car_normal_texture.wrapT = THREE.RepeatWrapping;
+        const car_texture = loadTexture('/texturaGrua.jpg');
+        const car_normal_texture = loadTexture('texturaGruaNormalMap.jpg');
 
         const main = new THREE.Mesh(
             new THREE.BoxBufferGeometry(this.params.carLength, 15, this.params.carWidth),
@@ -71,7 +67,8 @@ export class Forklift {
 
         const columnMaterial = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
         const acrossMaterial = new THREE.MeshLambertMaterial({ color: 0x00EEEE });
-        const liftMaterial = new THREE.MeshLambertMaterial({ color: 0x44FF77 });
+        const liftTexture = loadTexture('ScratchedPaintedMetal01_1K_BaseColor.png');
+        const liftMaterial = new THREE.MeshLambertMaterial({map: liftTexture});
 
         const columnGeometry = new THREE.BoxBufferGeometry(5, this.params.liftHeight, 5);
         const liftGeometry = new THREE.BoxBufferGeometry(spacing * 2, 0.5, spacing * 2);
@@ -149,7 +146,7 @@ export class Forklift {
 
         const wheelGeometry = new THREE.CylinderGeometry(wheelRadius, wheelRadius, wheelWidth, 32);
 
-        const texture = this.params.textureLoader.load('./textures/rueda.jpg');
+        const texture = loadTexture('rueda.jpg');
         const wheelMaterial = new THREE.MeshLambertMaterial({map: texture});
         const blackMaterial = new THREE.MeshLambertMaterial({color: 0x000000});
         const materials = [blackMaterial, wheelMaterial, blackMaterial];

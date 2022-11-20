@@ -2,7 +2,7 @@ import * as THREE from './libs/three.module.js';
 
 import { OrbitControls } from './libs/OrbitControls.js';
 
-import { materials, textures, lerp } from './utils/utils.js';
+import { materials, textures, lerp, loadTexture } from './utils/utils.js';
 import { Forklift } from './models/forklift.js';
 import { Keyboard } from './models/keyboard.js';
 import { Shelving } from './models/shelving.js';
@@ -11,7 +11,6 @@ import { shapes } from './utils/geometries.js';
 import { GUI } from './libs/dat.gui.module.js';
 
 let camera, scene, renderer, orbitCamera, controls;
-let textureLoader;
 
 let forklift, printer, shelving;
 
@@ -28,7 +27,7 @@ let geometryController = {
   geometryRotation: Math.PI / 2,
   geometryResolution: 40,
   geometryHeight: 20,
-  geometryMaterial: 'glossy',
+  geometryMaterial: 'texture',
   textureRepetition: 1,
   textureChosen: 'black_marble',
   render: function () {
@@ -205,10 +204,6 @@ function init() {
   const gridHelper = new THREE.GridHelper(size, divisions, 0x440000, 0x008800);
   scene.add(gridHelper);
 
-  textureLoader = new THREE.TextureLoader();
-
-  //
-
   printer = new Printer();
   scene.add(printer.printer);
 
@@ -220,8 +215,7 @@ function init() {
     ratio: window.innerWidth / window.innerHeight,
     carWidth: 30,
     carLength: 60,
-    liftHeight: 100,
-    textureLoader: textureLoader
+    liftHeight: 100
   });
   scene.add(forklift.car);
 
@@ -243,16 +237,11 @@ function createWalls(scene) {
   const wall_side = 3000;
   const plane = new THREE.BoxGeometry( wall_side, wall_side, 1);
 
-  const floor_texture = textureLoader.load('./textures/StoneTilesFloor01_1K_BaseColor.png');
-  floor_texture.wrapS = THREE.RepeatWrapping;
-  floor_texture.wrapT = THREE.RepeatWrapping;
+  const floor_texture = loadTexture('StoneTilesFloor01_1K_BaseColor.png');
   floor_texture.repeat.set( 20, 20 );
-  const floor_normal_texture = textureLoader.load('./textures/StoneTilesFloor01_1K_Normal.png');
-  floor_normal_texture.wrapS = THREE.RepeatWrapping;
-  floor_normal_texture.wrapT = THREE.RepeatWrapping;
+  const floor_normal_texture = loadTexture('StoneTilesFloor01_1K_Normal.png');
   floor_normal_texture.repeat.set( 20, 20 );
   const floor_material = new THREE.MeshPhongMaterial({ map : floor_texture, normalMap: floor_normal_texture});
-  // const floor_material = new THREE.MeshPhongMaterial({ map : floor_texture});
 
   const floor = new THREE.Mesh( plane, floor_material );
   floor.rotation.x = - Math.PI / 2;
@@ -261,17 +250,12 @@ function createWalls(scene) {
   warehouse.add(floor);
 
 
-  const wall_texture = textureLoader.load('./textures/CorrugatedMetalPanel02_1K_BaseColor.png');
-  wall_texture.wrapS = THREE.RepeatWrapping;
-  wall_texture.wrapT = THREE.RepeatWrapping;
+  const wall_texture = loadTexture('CorrugatedMetalPanel02_1K_BaseColor.png');
   wall_texture.repeat.set( 20, 20 );
-  const wall_normal_texture = textureLoader.load('./textures/CorrugatedMetalPanel02_1K_Normal.png');
-  wall_normal_texture.wrapS = THREE.RepeatWrapping;
-  wall_normal_texture.wrapT = THREE.RepeatWrapping;
+  const wall_normal_texture = loadTexture('CorrugatedMetalPanel02_1K_Normal.png');
   wall_normal_texture.repeat.set( 20, 20 );
 
   const wall_material = new THREE.MeshPhongMaterial({ map : wall_texture, normalMap: wall_normal_texture });
-  // wall_material.normalMap = wall_normal_texture;
   const walls = new THREE.Group();
 
   const wall_1 = new THREE.Mesh( plane, wall_material );

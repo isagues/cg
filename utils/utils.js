@@ -11,11 +11,11 @@ export const materials = {
 }
 
 export const textures = {
-  'black_marble': textureLoader.load('./textures/Marble03_1K_BaseColor.png'),
-  'white_marble': textureLoader.load('./textures/Marble09_1K_BaseColor.png'),
-  'stripes': textureLoader.load('./textures/patron3.png'),
-  'pattern_1_a': textureLoader.load('./textures/Pattern02_1K_VarA.png'),
-  'pattern_1_b': textureLoader.load('./textures/Pattern02_1K_VarB.png')
+  'black_marble': loadTexture('Marble03_1K_BaseColor.png'),
+  'white_marble': loadTexture('Marble09_1K_BaseColor.png'),
+  'stripes': loadTexture('patron3.png'),
+  'pattern_1_a': loadTexture('Pattern02_1K_VarA.png'),
+  'pattern_1_b': loadTexture('Pattern02_1K_VarB.png')
 }
 
 export function setMaterials(){
@@ -35,10 +35,12 @@ export function setMaterials(){
 return materials;
 }
 
-function loadTexture(textureName) {
-  textureLoader.load('./textures/' + textureName);
-  car_texture.wrapS = THREE.RepeatWrapping;
-  car_texture.wrapT = THREE.RepeatWrapping;
+export function loadTexture(textureName) {
+  const texture = textureLoader.load('./textures/' + textureName);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+
+  return texture;
 }
 
 export function areVectorClose( v1, v2, epsilon = 50 ) {
