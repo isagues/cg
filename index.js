@@ -315,7 +315,7 @@ function setupGui() {
   geometry.add(geometryController, 'geometryRotation', 0, Math.PI * 2).name('Rotation').listen();
   geometry.add(geometryController, 'geometryResolution', 10, 60).name('Resolution').listen();
   geometry.add(geometryController, 'geometryHeight', 10, 30).name('Height').listen();
-  geometry.add(geometryController, 'geometryMaterial', ['wireframe', 'flat', 'smooth', 'glossy']).name('Material').listen();
+  geometry.add(geometryController, 'geometryMaterial', ['wireframe', 'flat', 'smooth', 'glossy', 'textura3']).name('Material').listen();
 
   geometry.open();
 
