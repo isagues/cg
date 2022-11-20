@@ -1,8 +1,8 @@
 import * as THREE from './libs/three.module.js';
 
 import { OrbitControls } from './libs/OrbitControls.js';
-import { lerp } from './utils/utils.js';
 
+import { materials, textures, lerp } from './utils/utils.js';
 import { Forklift } from './models/forklift.js';
 import { Keyboard } from './models/keyboard.js';
 import { Shelving } from './models/shelving.js';
@@ -29,6 +29,8 @@ let geometryController = {
   geometryResolution: 40,
   geometryHeight: 20,
   geometryMaterial: 'glossy',
+  textureRepetition: 1,
+  textureChosen: 'black_marble',
   render: function () {
     renderGeometry();
   },
@@ -315,7 +317,9 @@ function setupGui() {
   geometry.add(geometryController, 'geometryRotation', 0, Math.PI * 2).name('Rotation').listen();
   geometry.add(geometryController, 'geometryResolution', 10, 60).name('Resolution').listen();
   geometry.add(geometryController, 'geometryHeight', 10, 30).name('Height').listen();
-  geometry.add(geometryController, 'geometryMaterial', ['wireframe', 'flat', 'smooth', 'glossy', 'textura3']).name('Material').listen();
+  geometry.add(geometryController, 'geometryMaterial', Object.keys(materials)).name('Material').listen();
+  geometry.add(geometryController, 'textureChosen', Object.keys(textures)).name('Texture').listen();
+  geometry.add(geometryController, 'textureRepetition', 1, 20).name('Repetition').listen();
 
   geometry.open();
 

@@ -1,5 +1,5 @@
 import * as THREE from '../libs/three.module.js';
-import { setMaterials } from '../utils/utils.js'
+import { materials, textures } from '../utils/utils.js'
 import { GeneratedGeometry } from '../utils/geometries.js'
 
 export class Printer {
@@ -14,7 +14,6 @@ export class Printer {
         this.liftHeight = this.printerHeight + 5;
         this.heightInterval = this.maxPieceHeight / this.steps;
         this.printer = this.createPrinter();
-        this.materials = setMaterials();
         this.printing = false;
         this.liftHead;
         this.piece;
@@ -196,8 +195,15 @@ export class Printer {
 
     renderGeometry(geometryController, progress) {      
       const geometry = new GeneratedGeometry(geometryController.geometryCode, geometryController.geometryHeight, this.pieceWidth, geometryController.geometryRotation, Math.round(geometryController.geometryResolution), progress);
-      
-      this.piece = new THREE.Mesh( geometry, this.materials[ geometryController.geometryMaterial ] );
+      const material = materials[ geometryController.geometryMaterial ];
+      if (geometryController.geometryMaterial === 'texture') {
+        const texture = textures[ geometryController.textureChosen];
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set( geometryController.textureRepetition, geometryController.textureRepetition );
+        material.map = texture;
+      }
+      this.piece = new THREE.Mesh( geometry, material );
 
       this.piece.position.y = this.printerHeight;
       this.piece.rotateX(-Math.PI / 2);

@@ -35,6 +35,7 @@ export const shapes = {
     },
 }
 
+
 const Z_AXIS = new THREE.Vector3(0, 0, 1);
 const FULL_ROTATION = Math.PI * 2;
 
