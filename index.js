@@ -61,7 +61,7 @@ function createCamera() {
   controls = new OrbitControls(orbitCamera, renderer.domElement);
   controls.addEventListener('change', render);
   controls.minDistance = 50;
-  controls.maxDistance = 500;
+  controls.maxDistance = 300;
   controls.enablePan = false;
   controls.target.set(0, 20, 0);
   controls.update();
@@ -261,14 +261,14 @@ function createWalls(scene) {
   const wall_1 = new THREE.Mesh( plane, wall_material );
   wall_1.rotation.x = - Math.PI;
   wall_1.position.y = wall_side/2;
-  wall_1.position.z = 500;
+  wall_1.position.z = 300;
   wall_1.receiveShadow = true;
   walls.add(wall_1);
 
   const wall_2 = new THREE.Mesh( plane, wall_material );
   wall_2.rotation.x = - Math.PI;
   wall_2.position.y = wall_side/2;
-  wall_2.position.z = -500;
+  wall_2.position.z = -300;
   wall_2.receiveShadow = true;
   walls.add(wall_2);
 
