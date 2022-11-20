@@ -200,7 +200,8 @@ export class Printer {
         const texture = textures[ geometryController.textureChosen];
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( geometryController.textureRepetition, geometryController.textureRepetition );
+        const repetition = Math.floor(geometryController.textureRepetition);
+        texture.repeat.set( repetition, repetition );
         material.map = texture;
       }
       this.piece = new THREE.Mesh( geometry, material.clone());
