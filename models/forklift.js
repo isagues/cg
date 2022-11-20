@@ -137,49 +137,61 @@ export class Forklift {
     }
 
     createWheel() {
-        const wheel = new THREE.Group();
+        // const wheel = new THREE.Group();
         
         const wheelRadius = 5;
         const wheelWidth = 5;
 
         const wheelGeometry = new THREE.CylinderGeometry(wheelRadius, wheelRadius, wheelWidth, 32);
-        const wheelMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
-        wheel.add(new THREE.Mesh(wheelGeometry, wheelMaterial));
+
+        let textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('./textures/rueda.jpg');
+        const wheelMaterial = new THREE.MeshPhongMaterial();
+        wheelMaterial.map = texture;
+      
+        const wheelMesh = new THREE.Mesh(wheelGeometry, wheelMaterial)
         
-
-        // Estrella
-        const starMaterial1 = new THREE.MeshLambertMaterial({ color: 0xb00000, wireframe: false });
-        const starMaterial2 = new THREE.MeshLambertMaterial({ color: 0xff8000, wireframe: false });
-
-        const points = [], numPts = 5;
-
-        for (let i = 0; i < numPts * 2; i++) {
-
-            const l = i % 2 == 1 ? 1.25 : 2.5;
-            const a = i / numPts * Math.PI;
-            points.push(new THREE.Vector2(Math.cos(a) * l, Math.sin(a) * l));
-        }
-
-        const starShape = new THREE.Shape(points);
-        const starMaterials = [starMaterial1, starMaterial2];
-
-        const extrudeSettings = {
-            depth: 0.5,
-            steps: 1,
-            bevelEnabled: true,
-            bevelThickness: 1,
-            bevelSize: 1,
-            bevelSegments: 1
-        };
-
-        const starGeometry = new THREE.ExtrudeGeometry(starShape, extrudeSettings);
-
-        const starMesh = new THREE.Mesh(starGeometry, starMaterials);
-        starMesh.position.set( 0, wheelWidth/2, 0 );
-        starMesh.rotateX(Math.PI/2);
-        wheel.add(starMesh)
         
-        return wheel;
+        textureLoader.load( './textures/rueda.jpg', function ( texture ) {
+          texture.wrapS = THREE.RepeatWrapping;
+          texture.wrapT = THREE.RepeatWrapping;
+          texture.repeat.set( 200, 200 );
+          wheelMesh.material.map = texture;
+        } );
+  
+        // // Estrella
+        // const starMaterial1 = new THREE.MeshLambertMaterial({ color: 0xb00000, wireframe: false });
+        // const starMaterial2 = new THREE.MeshLambertMaterial({ color: 0xff8000, wireframe: false });
+
+        // const points = [], numPts = 5;
+
+        // for (let i = 0; i < numPts * 2; i++) {
+
+        //     const l = i % 2 == 1 ? 1.25 : 2.5;
+        //     const a = i / numPts * Math.PI;
+        //     points.push(new THREE.Vector2(Math.cos(a) * l, Math.sin(a) * l));
+        // }
+
+        // const starShape = new THREE.Shape(points);
+        // const starMaterials = [starMaterial1, starMaterial2];
+
+        // const extrudeSettings = {
+        //     depth: 0.5,
+        //     steps: 1,
+        //     bevelEnabled: true,
+        //     bevelThickness: 1,
+        //     bevelSize: 1,
+        //     bevelSegments: 1
+        // };
+
+        // const starGeometry = new THREE.ExtrudeGeometry(starShape, extrudeSettings);
+
+        // const starMesh = new THREE.Mesh(starGeometry, starMaterials);
+        // starMesh.position.set( 0, wheelWidth/2, 0 );
+        // starMesh.rotateX(Math.PI/2);
+        // wheel.add(starMesh)
+        
+        return wheelMesh;
     }
 
     /// ------------------------------

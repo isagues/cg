@@ -235,69 +235,76 @@ function init() {
   setupGui();
 
 }
-
 function createWalls(scene) {
   const warehouse = new THREE.Group();
   const wall_side = 3000;
-  const plane = new THREE.BoxGeometry(wall_side, wall_side, 1);
+  const plane = new THREE.BoxGeometry( wall_side, wall_side, 1);
 
-  const floor_material = new THREE.MeshPhongMaterial();
-  const floor = new THREE.Mesh(plane, floor_material);
+  const floor_texture = textureLoader.load('./textures/StoneTilesFloor01_1K_BaseColor.png');
+  const floor_normal_texture = textureLoader.load('./textures/StoneTilesFloor01_1K_Normal.png');
+  floor_texture.wrapS = THREE.RepeatWrapping;
+  floor_texture.wrapT = THREE.RepeatWrapping;
+  floor_texture.repeat.set( 20, 20 );
+  floor_normal_texture.wrapS = THREE.RepeatWrapping;
+  floor_normal_texture.wrapT = THREE.RepeatWrapping;
+  floor_normal_texture.repeat.set( 20, 20 );
+  const floor_material = new THREE.MeshBasicMaterial({ map : floor_texture, normalMap: floor_normal_texture});
+  // const floor_normal_material = new THREE.MeshNormalMaterial({ map : floor_texture });
+  // floor_normal_material.normalMap = floor_normal_texture;
+  // floor_material.normalMap = floor_normal_texture;
+
+  const floor = new THREE.Mesh( plane, floor_material );
   floor.rotation.x = - Math.PI / 2;
   floor.position.y = 0;
   floor.receiveShadow = true;
   warehouse.add(floor);
 
-  const walls = new THREE.Group();
-  const wall_material = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
 
-  const wall_1 = new THREE.Mesh(plane, wall_material);
+  const wall_texture = textureLoader.load('./textures/CorrugatedMetalPanel02_1K_BaseColor.png');
+  const wall_normal_texture = textureLoader.load('./textures/CorrugatedMetalPanel02_1K_Normal.png');
+  wall_texture.wrapS = THREE.RepeatWrapping;
+  wall_texture.wrapT = THREE.RepeatWrapping;
+  wall_texture.repeat.set( 20, 20 );
+
+
+  const wall_material = new THREE.MeshBasicMaterial({ map : wall_texture });
+  // wall_material.normalMap = wall_normal_texture;
+  const walls = new THREE.Group();
+
+  const wall_1 = new THREE.Mesh( plane, wall_material );
   wall_1.rotation.x = - Math.PI;
-  wall_1.position.y = wall_side / 2;
+  wall_1.position.y = wall_side/2;
   wall_1.position.z = 500;
   wall_1.receiveShadow = true;
   walls.add(wall_1);
 
-  const wall_2 = new THREE.Mesh(plane, wall_material);
+  const wall_2 = new THREE.Mesh( plane, wall_material );
   wall_2.rotation.x = - Math.PI;
-  wall_2.position.y = wall_side / 2;
+  wall_2.position.y = wall_side/2;
   wall_2.position.z = -500;
   wall_2.receiveShadow = true;
   walls.add(wall_2);
 
-  const wall_3 = new THREE.Mesh(plane, wall_material);
+  const wall_3 = new THREE.Mesh( plane, wall_material );
   wall_3.rotation.x = - Math.PI;
   wall_3.rotation.y = Math.PI / 2;
   wall_3.position.x = -500;
-  wall_3.position.y = wall_side / 2;
+  wall_3.position.y = wall_side/2;
   wall_3.receiveShadow = true;
   walls.add(wall_3);
 
-  const wall_4 = new THREE.Mesh(plane, wall_material);
+  const wall_4 = new THREE.Mesh( plane, wall_material );
   wall_4.rotation.x = - Math.PI;
   wall_4.rotation.y = Math.PI / 2;
   wall_4.position.x = 500;
-  wall_4.position.y = wall_side / 2;
+  wall_4.position.y = wall_side/2;
   wall_4.receiveShadow = true;
   walls.add(wall_4);
 
   warehouse.add(walls);
 
   scene.add(warehouse);
-
-  textureLoader.load('./grid.png', function (texture) {
-
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(200, 200);
-    floor.material.map = texture;
-    floor.material.needsUpdate = true;
-    texture.repeat.set(100, 100);
-    wall_3.material.map = texture;
-    wall_3.material.needsUpdate = true;
-  });
 }
-
 
 function setupGui() {
   var gui = new GUI();
