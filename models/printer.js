@@ -80,7 +80,7 @@ export class Printer {
 
         const height = this.maxPieceHeight * 2;
 
-        const columnMaterial    = new THREE.MeshLambertMaterial({ color: 0xE6D3C3 });
+        const columnMaterial    = new THREE.MeshPhongMaterial({ color: 0xE6D3C, shininess: 100 });
         const columnGeometry    = new THREE.CylinderGeometry(2, 2, height, 32);
         const column = new THREE.Mesh(columnGeometry, columnMaterial);
         column.position.x = this.printerRadius - 5;
@@ -98,11 +98,49 @@ export class Printer {
     createPrinter() {
         const printer = new THREE.Group();
 
-        const geometry = new THREE.CylinderGeometry( this.printerRadius, this.printerRadius, this.printerHeight, 32);
-        const material = new THREE.MeshLambertMaterial({ color: 0xE6D3C3 });
+        var loader = new THREE.CubeTextureLoader();
+        loader.setPath( 'textures/' );
+
+        var textureCube = loader.load( [
+          'greyRoom1_right.jpg', 'greyRoom1_left.jpg', 'greyRoom1_top.jpg', 
+          'greyRoom1_bottom.jpg', 'greyRoom1_front.jpg', 'greyRoom1_back.jpg', 
+        ] );
+
+        textureCube.format = THREE.RGBFormat;
+        textureCube.mapping = THREE.CubeReflectionMapping;
+
+        const material = new THREE.MeshPhongMaterial({ 
+          color:0xFFFFFF,			
+					specular:0x888888,		
+					shininess:120,
+					envMap:textureCube,	
+					reflectivity:1,
+					emissive:0x333333,
+					// map:diffuseMap,					
+					// side:THREE.DoubleSide	
+        });
+        // const geometry = new THREE.CylinderGeometry( this.printerRadius, this.printerRadius, this.printerHeight, 32);
+        
+        const shape = new THREE.Shape();
+        shape.moveTo( 0,0 );
+        shape.arc( 0, 0, this.printerRadius, 0, 2*Math.PI);
+
+        const extrudeSettings = {
+          curveSegments: 360,
+          steps: 16,
+          depth: this.printerHeight,
+          bevelEnabled: true,
+          bevelThickness: 1,
+          bevelSize: 4,
+          bevelOffset: 0,
+          bevelSegments: 1
+        };
+
+        const geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+        
         const printerBase = new THREE.Mesh(geometry, material);
      
-        printerBase.position.y = this.printerHeight/2;
+        printerBase.rotateX(-Math.PI / 2)
         
         printer.add(printerBase)
 
