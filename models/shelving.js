@@ -13,6 +13,23 @@ export class Shelving {
         this.object.rotation.y = Math.PI /2;
     }
 
+    loadTextures() {
+        let textureLoader = new THREE.TextureLoader();
+        
+        const ans = {}
+        
+        ans.wood = textureLoader.load('./textures/Wood06_1K_BaseColor.png');
+        ans.wood.wrapS = THREE.RepeatWrapping;
+        ans.wood.wrapT = THREE.RepeatWrapping;
+        ans.wood.repeat.set( 1, 15 );
+        
+        ans.metal = textureLoader.load('./textures/ScratchedPaintedMetal01_1K_BaseColor.png');
+        ans.metal.wrapS = THREE.RepeatWrapping;
+        ans.metal.wrapT = THREE.RepeatWrapping;
+        ans.metal.repeat.set( 1, 15 );
+
+        return ans;
+    }
 
     createShelving() {
         const structure = new THREE.Group();
@@ -24,12 +41,15 @@ export class Shelving {
         const colRows = 2;
         const colPerRow = 9;
         const shelfLevels = 2;
+        
+        const {metal: columnTexture, wood: shelfTexture } = this.loadTextures();
 
-        const columnMaterial    = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
-        const shelfMaterial    = new THREE.MeshLambertMaterial({ color: 0x00EEEE });
+        const columnMaterial    = new THREE.MeshLambertMaterial({ map: columnTexture});
+        const shelfMaterial    = new THREE.MeshLambertMaterial({ map: shelfTexture });
 
-        const columnGeometry    = new THREE.BoxBufferGeometry(1, height, 1);
+        const columnGeometry    = new THREE.CylinderBufferGeometry(1, 1, height);
         const shelfGeometry    = new THREE.BoxBufferGeometry(width, 1, depth);
+
 
         for(let i = 0; i < colRows; i++) {
             for(let j = 0; j < colPerRow; j++) {
@@ -41,7 +61,7 @@ export class Shelving {
             }
         }
 
-        for(let i = 0; i < shelfLevels; i++) {
+        for(let i = 0; i <= shelfLevels; i++) {
             const shelf = new THREE.Mesh(shelfGeometry, shelfMaterial);
             shelf.position.y = lerp(0, height, (i+1)/(shelfLevels+1));
             structure.add(shelf); 
